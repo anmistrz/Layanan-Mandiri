@@ -57,7 +57,7 @@ const Scan = () => {
                 <Text fontSize='md' text='center'>Scan Your ID Card To Login</Text>
 
                 <Input placeholder="ID Card Number" name="cardnumber" w="2xl" h='50px' bgColor='white' onChange={handleInput} />
-                <Button onClick={handleSubmit} colorScheme="blue" w="sm">Login</Button>
+                <Button onClick={handleSubmit} colorScheme="blue" w="sm"> Login </Button>
             </VStack>
         </>
     )
