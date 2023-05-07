@@ -94,7 +94,8 @@ const ModalProfile = (props) => {
                                         <AlertIcon />
                                         <AlertTitle mr={2}>{formik.errors.phone}</AlertTitle>
                                     </Alert>
-                                )} 
+                                )}
+                                
                                 <Input
                                     mt={2} 
                                     id="phone" 
