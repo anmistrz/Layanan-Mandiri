@@ -28,7 +28,7 @@ const Scan = () => {
                 dispatch(loginUser({type: "LOGIN" ,payload: idcard}))
                 setTimeout(() => {
                     navigate('/dashboard/user')
-               }, 500)
+               }, 1000)
                 toast({
                     title: 'Login Success',
                     status: 'success',

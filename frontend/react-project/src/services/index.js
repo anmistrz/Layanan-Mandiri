@@ -29,6 +29,7 @@ const getPhotoProfile = () => Get("/login/user/image");
 const updateIssues = (data) => Put("/issues/update", data ?? {});
 const updateRenew = (data) => Put("/renew/update", data ?? {});
 const updateSuggest = (data) => Put("/suggest/update", data ?? {});
+const updateProfile = (data) => Put("/login/user/update", data ?? {});
 
 //Delete
 const deleteSuggest = (id) => Delete(`/suggest/delete/${id}`);
@@ -51,6 +52,7 @@ const API = {
     deleteSuggest,
     getDetailSuggest,
     getPhotoProfile,
+    updateProfile,
 
 }
 

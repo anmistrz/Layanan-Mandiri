@@ -144,7 +144,7 @@ class _auth {
                 }
             }
 
-            const checkUser = await mysql.query('SELECT p.cardnumber, p.categorycode ,p.surname, p.dateexpiry FROM koha.borrowers p WHERE p.cardnumber = ?', [body.cardnumber])
+            const checkUser = await mysql.query('SELECT p.cardnumber, p.categorycode ,p.surname, p.dateexpiry, p.address, p.phone FROM koha.borrowers p WHERE p.cardnumber = ?', [body.cardnumber])
 
             if(checkUser.length == 0) {
                 return {
@@ -162,7 +162,9 @@ class _auth {
                 categorycode: checkUser[0].categorycode,
                 surname: checkUser[0].surname,
                 dateexpiry: checkUser[0].dateexpiry,
-                duration: expiresIn
+                duration: expiresIn,
+                address: checkUser[0].address,
+                phone: checkUser[0].phone
             }
 
 
@@ -184,6 +186,61 @@ class _auth {
             }
         }
     }
+
+    updateUser = async (cardnumber, body) => {
+        try {
+            const schema = Joi.object({
+                address: Joi.string().optional(),
+                phone: Joi.string().optional()
+            })
+
+            const validation = schema.validate(body)
+
+            if(validation.error){
+                const errorDetails = validation.error.details.map(detail => detail.message)
+                return {
+                    status: false,
+                    code: 400,
+                    error: errorDetails.join(', ')
+                }
+            }
+
+            const checkUser = await mysql.query('SELECT p.cardnumber, p.categorycode ,p.surname, p.dateexpiry, p.address, p.phone FROM koha.borrowers p WHERE p.cardnumber = ?', [cardnumber])
+
+            if(checkUser.length == 0) {
+                return {
+                    status: false,
+                    code: 404,
+                    error: 'User not found'
+                }
+            }
+
+            const update = await mysql.query('UPDATE koha.borrowers SET address = ?, phone = ? WHERE cardnumber = ?',
+            [body.address, body.phone, cardnumber])
+
+            if(update.affectedRows < 0) {
+                return {
+                    status: false,
+                    code: 404,
+                    error: 'Update failed'
+                }
+            }
+
+            return {
+                status: true,
+                data: {
+                    message: 'Update success'
+                }
+            }
+        } catch (error) {
+            console.error('Update auth module Error: ', error)
+            return {
+                status: false,
+                error
+            }
+        }
+    }
+
 
     indexLogin = async (body) => {
         try {

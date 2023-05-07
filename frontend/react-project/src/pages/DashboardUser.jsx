@@ -17,7 +17,8 @@ import {
     Stack, 
     useToast,
     Center,
-    Spinner
+    Spinner,
+    useDisclosure
 } from '@chakra-ui/react'
 
 import TablePinjaman from "../Components/Table/TablePinjaman";
@@ -28,11 +29,15 @@ import { useNavigate } from "react-router-dom";
 import { set } from "date-fns";
 import { setAutomaticLogout } from "../features/loginSlices";
 import API from "../services";
+import ModalProfile from "../Components/Modal/ModalProfile";
 
 
 const dashboardUser = () => {
-    const stateIssue = useSelector(state => state.issue)
+    // const stateIssue = useSelector(state => state.issue)
     const stateLogin = useSelector(state => state.login)
+    const [selectedProfile, setSelectedProfile] = useState({})
+    const [type, setType] = useState('')
+    const { isOpen, onOpen, onClose } = useDisclosure()
     const [urlImage, setUrlImage] = useState('')
     const navigate = useNavigate()
     const [data, setData] = useState({})
@@ -92,13 +97,19 @@ const dashboardUser = () => {
             <div className="container mx-auto h-screen">
                 <Navbar />
                 <HStack spacing={4} w='100%' align="center"  my="5">
-                    <Box w='20%' h="550px" p='5px' >
+                    <Box w='20%' h="580px" p='5px' >
                         <Card alignItems='center' w='100%' bgColor='transparent' boxShadow='transparent' h='100%'>
                             <Heading fontSize='2xl' my={3} textAlign='center'>{data.surname}</Heading>
-                            <Image boxSize='400px' mx="auto" src={'data:image/jpeg;base64,' + urlImage.image} alt="No Image Found" />
-                            <Heading fontSize='md' my={3} textAlign='center'>Card Validity Period</Heading>
+
+                            {(urlImage.image) ? (
+                                <Image boxSize='250px' mx="auto" src={'data:image/jpeg;base64,' + urlImage.image} alt="No Image Found" />
+                            ) : (
+                                <img boxSize='250px' src="https://www.kindpng.com/picc/m/80-807524_no-profile-hd-png-download.png" alt="No Profile, HD Png Download@kindpng.com"></img>
+                            )}
+
+                            <Heading fontSize='md' my={3} textAlign='center'>Masa Aktif Kartu</Heading>
                             {(new Date() > new Date(data.dateexpiry)) ? (
-                                <Heading fontSize='lg' my={3} color='red.500' textAlign='center'>
+                                <Heading fontSize='md' my={3} color='red.500' textAlign='center'>
                                     {new Date(data.dateexpiry).toLocaleDateString("id-ID", {
                                         weekday: 'long', 
                                         year:'numeric', 
@@ -107,7 +118,7 @@ const dashboardUser = () => {
                                     })}
                                 </Heading>
                             ) : (
-                                <Heading fontSize='lg' my={3} color='green.500' textAlign='center'>
+                                <Heading fontSize='md' my={3} color='green.500' textAlign='center'>
                                     {new Date(data.dateexpiry).toLocaleDateString("id-ID", {
                                         weekday: 'long', 
                                         year:'numeric', 
@@ -116,14 +127,30 @@ const dashboardUser = () => {
                                     })}
                                 </Heading>
                             )}
-                            <Heading fontSize='lg' my={3} textAlign='center'>Status : 
+                            
+                            <Text fontSize='sm' my={1} textAlign='center'>{stateLogin.users.address}</Text>
+                            <Text fontSize='sm' my={1} textAlign='center'>{stateLogin.users.phone}</Text>
+
+                            {/* <Heading fontSize='lg' my={3} textAlign='center'>Status : 
                                     {(new Date() > new Date(data.dateexpiry)) ? (
                                         <Text as={'span'} color='red.500'> Expired </Text>
                                     ) : (
                                         <Text as={'span'} color='green.500'> Active </Text>
                                     )}
-                            </Heading>
-                            <Button colorScheme='blue' mx="auto" alignItems="center" w='75%' my={3}>Update Profile</Button>
+                            </Heading> */}
+                            <Button 
+                                colorScheme='blue' 
+                                mx="auto" 
+                                alignItems="center" 
+                                w='75%' 
+                                my={2}
+                                onClick= {() => {
+                                    setType('PROFILE')
+                                    onOpen()
+                                    setSelectedProfile({address: stateLogin.users.address, phone: stateLogin.users.phone})
+                                }}>
+                                    Update Profile
+                                </Button>
                         </Card>
                     </Box>
                     <Box w='100%'  h="550px"  p='5px' >
@@ -142,7 +169,7 @@ const dashboardUser = () => {
                                         <TablePinjaman />
                                     </TabPanel>
                                     <TabPanel overflowY='scroll' position='relative' height='500px' mt={4}>
-                                        <p>two</p>
+                                        <p>ddfssd</p>
                                     </TabPanel>
                                     <TabPanel overflowY='scroll' position='relative' height='500px' mt={4}>
                                         <TableSuggest />
@@ -155,6 +182,8 @@ const dashboardUser = () => {
                         </Card>
                     </Box>
                 </HStack>
+
+                <ModalProfile isOpen={isOpen} onClose={onClose} type={type} data={selectedProfile}/>
             </div>
     
         </>

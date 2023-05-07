@@ -20,13 +20,16 @@ const delCookies = (name) => {
 const certCookies = () => {
   const token = getCookies('CERT');
   if (token) {
-    const { cardnumber, categorycode, surname, dateexpiry ,exp } = parseJwt(token);
+    const { cardnumber, categorycode, surname, dateexpiry, duration, address, phone, exp } = parseJwt(token);
     if (!cardnumber) return delCookies('CERT');
     return {
         cardnumber,
         categorycode,
         surname,
         dateexpiry,
+        duration,
+        address,
+        phone,
         exp,
     };
   }

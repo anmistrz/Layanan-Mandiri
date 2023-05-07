@@ -11,7 +11,7 @@ import {
 import { Tooltip } from '@chakra-ui/react';
 import API from '../../services/index'
 import {useDispatch, useSelector} from 'react-redux'
-import ModalPinjaman from '../ModalPinjaman/ModalPinjaman';
+import ModalPinjaman from '../Modal/ModalPinjaman';
 import { useDisclosure } from '@chakra-ui/react';
 import { renewBook, setRefreshRenew, setTriggerRenew } from '../../features/renewSlices';
 import { setTriggerIssue } from '../../features/issueSlices';
@@ -98,7 +98,6 @@ const TablePinjaman = () => {
                 Cell : ({row}) => {
                     const overdue = new Date(row.original.date_due) < new Date()
                     return (
-                        <>
                             <Box>
                                 {overdue ? (
                                     <Tooltip label="Overdue" aria-label="Overdue">
@@ -114,7 +113,6 @@ const TablePinjaman = () => {
                                     </span>
                                 )}
                             </Box>                            
-                        </>
                     )
                 }
             },

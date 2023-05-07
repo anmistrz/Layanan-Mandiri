@@ -27,5 +27,9 @@ AuthController.get('/user/image', userSession ,async (req, res, next) => {
     response.sendResponse(res, await m$auth.getImageUser(req.user.cardnumber))
 })
 
+AuthController.get('/user/update', userSession, async (req, res, next) => {
+    response.sendResponse(res, await m$auth.updateUser(req.body))
+})
+
 
 module.exports = AuthController;

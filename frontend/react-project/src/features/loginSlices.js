@@ -5,7 +5,6 @@ import parseISO from "date-fns/parseISO";
 import parseJwt from "../utils/parseJwt";
 
 
-
 export const loginIndex = createAsyncThunk(
     "loginIndex",
     async (args, thunkAPI) => {
@@ -42,14 +41,7 @@ export const loginUser = createAsyncThunk(
                 }
                 return res.data;
             }
-            // console.log('resLogin User: ', res);
-            
-            // args = {
-            //     ...args,
-            //     token: res.data.token,
-            //     expiredAt: res.data.expiredAt,
-            // }
-            // return res.data
+
         }catch (err) {
             return thunkAPI.rejectWithValue(err);
         }
@@ -73,6 +65,22 @@ export const logout = createAsyncThunk(
         }
     }
 );
+
+
+export const updateUser = createAsyncThunk(
+    "updateUser",
+    async (args,thunkAPI) => {
+        console.log('args updaetUser:',args)
+
+        try {
+            const res = await API.updateUser(args);
+            console.log('res updateUser: ', res);
+            return res.data.data;
+        } catch (err) {
+            return thunkAPI.rejectWithValue(err);
+        }
+    }
+)
 
 
 export const loginReducer = createSlice({
@@ -164,6 +172,23 @@ export const loginReducer = createSlice({
                 default:
                     break;
             }
+        }),
+
+
+        builder.addCase(updateUser.pending, (state, action) => {
+            state.loading = true;
+        }),
+
+        builder.addCase(updateUser.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        }),
+
+        builder.addCase(updateUser.fulfilled, (state, action) => {
+            state.users = action.payload;
+            state.loading = false;
+            state.error = null;
+            state.trigger = !state.trigger;
         })
     }
 
