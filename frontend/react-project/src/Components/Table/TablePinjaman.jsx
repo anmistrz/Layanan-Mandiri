@@ -11,7 +11,7 @@ import {
 import { Tooltip } from '@chakra-ui/react';
 import API from '../../services/index'
 import {useDispatch, useSelector} from 'react-redux'
-import ModalPinjaman from '../Modal/ModalPinjaman';
+import ModalPinjaman from '../ModalPinjaman/ModalPinjaman';
 import { useDisclosure } from '@chakra-ui/react';
 import { renewBook, setRefreshRenew, setTriggerRenew } from '../../features/renewSlices';
 import { setTriggerIssue } from '../../features/issueSlices';
@@ -31,7 +31,7 @@ const TablePinjaman = () => {
     const getDataPinjaman = async () => {
         try {
             const res = await API.getIssues()
-            console.log("res", res.data)
+            console.log("res data pinjaman", res.data)
             setDataPinjaman(res.data)
         } catch (error) {
             console.log("error", error)
@@ -50,7 +50,7 @@ const TablePinjaman = () => {
 
     useEffect(() => {
         getDataPinjaman()
-    },[states.trigger])
+    },[states.loading])
 
     useEffect(() => {
         getDataPinjaman()

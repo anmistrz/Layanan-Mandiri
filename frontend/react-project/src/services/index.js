@@ -21,6 +21,7 @@ const getListCheckoutIssues = (id) => Get(`/issues/${id}`);
 const getDetailRenew = (id) => Get(`/renew/${id}`);
 const getMySuggest = () => Get("/suggest/list");
 const getDetailSuggest = (id) => Get(`/suggest/list/${id}`);
+const getPhotoProfile = () => Get("/login/user/image");
 
 
 
@@ -49,6 +50,7 @@ const API = {
     updateSuggest,
     deleteSuggest,
     getDetailSuggest,
+    getPhotoProfile,
 
 }
 

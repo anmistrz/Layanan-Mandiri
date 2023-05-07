@@ -4,7 +4,6 @@ const config = require('../config/app.config.json')
 const date = require('date-and-time')
 const Joi = require('joi')
 const Bcrypt = require('bcrypt')
-const { userInfo } = require('os')
 
 class _auth {
 
@@ -61,6 +60,69 @@ class _auth {
             }
         }
 
+    }
+
+
+
+    // blobToImage = (blob) => {
+    //     return new Promise(resolve => {
+    //     const url = URL.createObjectURL(blob)
+    //     let img = new Image()
+    //     img.onload = () => {
+    //         URL.revokeObjectURL(url)
+    //         resolve(img)
+    //     }
+    //     img.src = url
+    //     })
+    // }
+
+    getImageUser = async (cardnumber) => {
+        try {
+            const schema = Joi.string().required()
+
+            const validation = schema.validate(cardnumber)
+
+            if(validation.error){
+                const errorDetails = validation.error.details.map(detail => detail.message)
+                return {
+                    status: false,
+                    code: 400,
+                    error: errorDetails.join(', ')
+                }
+            }
+
+            const checkUser = await mysql.query('SELECT pi.imagefile, p.cardnumber, p.categorycode ,p.surname, p.dateexpiry FROM koha.borrowers p LEFT JOIN koha.patronimage pi ON p.borrowernumber = pi.borrowernumber WHERE p.cardnumber = ?',
+            [cardnumber])
+
+            if(checkUser.length == 0) {
+                return {
+                    status: false,
+                    code: 404,
+                    error: 'User not found'
+                }
+            }
+
+            // const image = await this.blobToImage(checkUser[0].imagefile.data)
+            const imgBase64 = checkUser[0].imagefile.toString("base64");
+            // const image = `data:image/png;base64,${imgBase64}`;
+            // checkUser[0].imagefile = image
+
+            console.log("image blob to Image: ", checkUser[0].imagefile)
+
+            return {
+                status: true,
+                data: {
+                    image: imgBase64
+                }
+            }
+
+        } catch (error) {
+            console.error('Get Image auth module Error: ', error)
+            return {
+                status: false,
+                error
+            }
+        }
     }
 
     login = async (body) => {

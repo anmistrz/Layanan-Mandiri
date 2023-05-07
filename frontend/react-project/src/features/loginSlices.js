@@ -34,15 +34,22 @@ export const loginUser = createAsyncThunk(
             cardnumber: args.payload.cardnumber,
         }
         try {
-            const res = await API.loginUser(value);
+            if(args.type === "LOGIN") {
+                const res = await API.loginUser(value);
+                args = {
+                    ...args,
+                    token: res.data.token,
+                }
+                return res.data;
+            }
             // console.log('resLogin User: ', res);
             
-            args = {
-                ...args,
-                token: res.data.token,
-                expiredAt: res.data.expiredAt,
-            }
-            return res.data
+            // args = {
+            //     ...args,
+            //     token: res.data.token,
+            //     expiredAt: res.data.expiredAt,
+            // }
+            // return res.data
         }catch (err) {
             return thunkAPI.rejectWithValue(err);
         }
@@ -128,7 +135,7 @@ export const loginReducer = createSlice({
         }),
         builder.addCase(loginUser.fulfilled, (state, action) => {
                 state.users = parseJwt(action.payload.token);
-                console.log('state.users: ', state.users);
+                console.log('state.users fullfiled: ', state.users);
                 state.loading = false;
                 state.error = null;
                 Cookies.setCookies ("CERT", action.payload.token, {datetime: parseISO(action.payload.expiredAt)});

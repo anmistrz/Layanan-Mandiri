@@ -22,9 +22,9 @@ const Scan = () => {
 
     const handleSubmit = async() => {
         try {
-            const res = await API.loginUser(idcard)
-            console.log("res", res.data)
-            if(res.status) {
+            // const res = await API.loginUser(idcard)
+            // console.log("res user", res.data)
+            // if(res.status) {
                 dispatch(loginUser({type: "LOGIN" ,payload: idcard}))
                 setTimeout(() => {
                     navigate('/dashboard/user')
@@ -34,7 +34,7 @@ const Scan = () => {
                     status: 'success',
                     isClosable: true,
                 })
-            }
+                
         } catch(error) {
             toast({
                 title: 'Login Failed',

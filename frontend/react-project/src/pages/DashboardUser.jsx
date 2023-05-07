@@ -27,11 +27,13 @@ import Cookies from "../utils/cookies"
 import { useNavigate } from "react-router-dom";
 import { set } from "date-fns";
 import { setAutomaticLogout } from "../features/loginSlices";
+import API from "../services";
 
 
 const dashboardUser = () => {
     const stateIssue = useSelector(state => state.issue)
     const stateLogin = useSelector(state => state.login)
+    const [urlImage, setUrlImage] = useState('')
     const navigate = useNavigate()
     const [data, setData] = useState({})
     const dispatch = useDispatch()
@@ -44,28 +46,46 @@ const dashboardUser = () => {
             navigate('/index')
         }, stateLogin.users.duration)
     }
-    
+
+    const getPhotoProfile = async() => {
+        try {
+            const res = await API.getPhotoProfile()
+            console.log("res photo", res.data)
+            setUrlImage(res.data)
+        } catch(error) {
+            console.log("error photo", error)
+        }
+    }
+
+
     useEffect(() => {
-        const dataCookies = Cookies.certCookies()
-        setData(dataCookies)
-        timeoutCookies()
+            const dataCookies = Cookies.certCookies()
+            setData(dataCookies)
+        console.log("data cookies", dataCookies)
+        // timeoutCookies()
+        getPhotoProfile()
     }, [])
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        if (new Date() > new Date(data.dateexpiry)) {
-            toast ({
-                position: "top-right",
-                title: "Session Expired",
-                description: "Masa berlaku kartu telah habis",
-                status: "error",
-                duration: 2000,
-                isClosable: true,
-            })
-            navigate('/index')
-        }
+    //     if (new Date() > new Date(data.dateexpiry)) {
+    //         toast ({
+    //             position: "top-right",
+    //             title: "Session Expired",
+    //             description: "Masa berlaku kartu telah habis",
+    //             status: "error",
+    //             duration: 2000,
+    //             isClosable: true,
+    //         })
+    //         navigate('/index')
+    //     }
 
-    }, [data])
+    // }, [data])
+
+    useEffect ( () => {
+        console.log("image", urlImage)
+
+    }, [urlImage])
 
     return (
         <>
@@ -75,7 +95,7 @@ const dashboardUser = () => {
                     <Box w='20%' h="550px" p='5px' >
                         <Card alignItems='center' w='100%' bgColor='transparent' boxShadow='transparent' h='100%'>
                             <Heading fontSize='2xl' my={3} textAlign='center'>{data.surname}</Heading>
-                            <Image boxSize='200px' mx="auto" src='gibbresh.png' fallbackSrc='https://via.placeholder.com/200' />
+                            <Image boxSize='400px' mx="auto" src={'data:image/jpeg;base64,' + urlImage.image} alt="No Image Found" />
                             <Heading fontSize='md' my={3} textAlign='center'>Card Validity Period</Heading>
                             {(new Date() > new Date(data.dateexpiry)) ? (
                                 <Heading fontSize='lg' my={3} color='red.500' textAlign='center'>

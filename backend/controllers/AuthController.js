@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const response = require('../helpers/response');
 const m$auth = require('../modules/auth.modules');
+const { userSession } = require('../helpers/middleware');
 
 const AuthController = Router();
 
@@ -20,6 +21,10 @@ AuthController.post('/admin', async (req, res, next) => {
 
 AuthController.post('/logout', async (req, res, next) => {
     response.sendResponse(res, await m$auth.logout(req.body))
+})
+
+AuthController.get('/user/image', userSession ,async (req, res, next) => {
+    response.sendResponse(res, await m$auth.getImageUser(req.user.cardnumber))
 })
 
 
