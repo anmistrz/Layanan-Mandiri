@@ -26,6 +26,7 @@ class _checkin {
                     error: errorDetails.join(', ')
                 }
             }
+            
 
             const list = await mysql.query("SELECT b.borrowernumber, i.issue_id ,i.itemnumber, i.date_due, i.branchcode, i.lastreneweddate ,i.renewals, i.auto_renew, i.issuedate, i.onsite_checkout FROM koha.borrowers b LEFT JOIN koha.issues i ON i.borrowernumber = b.borrowernumber LEFT JOIN koha.items i2 ON i2.itemnumber = i.itemnumber WHERE i.branchcode= 'PUSAT' AND b.cardnumber = ? AND i2.barcode = ?",
             [body.cardnumber, body.barcode]);
