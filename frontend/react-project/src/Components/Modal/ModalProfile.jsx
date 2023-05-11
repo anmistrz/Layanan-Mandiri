@@ -31,15 +31,25 @@ import {
 
 import { useFormik, ErrorMessage } from 'formik';
 import { USER_VALIDATION } from "../../validation/validation";
+import { useDispatch, useSelector } from "react-redux";
+import { setTriggerUpdateProfile, updateUser } from "../../features/loginSlices";
 
 
 const ModalProfile = (props) => {
 
     const [dataEdit, setDataEdit] = useState({})
+    const dispatch = useDispatch()
+    const toast = useToast ({
+        position: 'top-right',
+        duration: 2000,
+        variant: 'left-accent',
+    })
 
     // const handleChangeInputProfile = (e) => {
     //     setDataEdit({...dataEdit, [e.target.id]: e.target.value})
     // }
+
+
 
     const formik = useFormik({
         initialValues: {
@@ -51,11 +61,16 @@ const ModalProfile = (props) => {
 
         onSubmit: (values, actions) => {
             console.log("values", values)
-            setTimeout(() => {
-                // Schema.validationSchema.validate(values);
-                alert(JSON.stringify(values, null, 2));
-                actions.setSubmitting(false);
-            }, 1000);
+            dispatch(updateUser(values))
+            props.onClose()
+            dispatch(setTriggerUpdateProfile(true))
+            actions.setSubmitting(false);
+
+            toast({
+                title: 'Update Profile Success',
+                status: 'success',
+                isClosable: true,
+            })
         },
         validationSchema: USER_VALIDATION,
         validateOnChange: true,
@@ -109,7 +124,7 @@ const ModalProfile = (props) => {
                                 Close
                             </Button>
                             <Button mr={3} colorScheme="blue" type="submit" isLoading={formik.isSubmitting}>
-                                    Submit
+                                    Update Data
                             </Button>
                         </ModalFooter>
                     </form>

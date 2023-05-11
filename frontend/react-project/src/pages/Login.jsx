@@ -77,7 +77,7 @@ const login = () => {
                         <Heading as='h3' size='lg' textAlign='center' pt='20px' mb={1} >
                             Welcome Back
                         </Heading>
-                        <Heading as='h6' size='md' textAlign='center' p='5px'mb={8} color="blue.500" >
+                        <Heading as='h6' size='md' textAlign='center' p='5px'mb={5} color="blue.500" >
                             UMS Digital Library
                         </Heading>
                         <Box p={2} display='grid' w='90%' gap={5}>
@@ -89,7 +89,7 @@ const login = () => {
                                 <FormLabel>Password</FormLabel>
                                 <Input placeholder=" "  type="password" name="password" onChange={handleInput} bgColor='white'/>
                             </FormControl>
-                            <Button colorScheme='blue' type="submit" mt={10} onClick={handleSubmitLogin}> Login </Button>
+                            <Button colorScheme='blue' type="submit" mt={2} onClick={handleSubmitLogin}> Login </Button>
                         </Box>
                     </Card>
                 </Box>

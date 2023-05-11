@@ -63,18 +63,47 @@ class _auth {
     }
 
 
+    getDataUser = async (cardnumber) => {
+        try {
+            const schema = Joi.string().required()
 
-    // blobToImage = (blob) => {
-    //     return new Promise(resolve => {
-    //     const url = URL.createObjectURL(blob)
-    //     let img = new Image()
-    //     img.onload = () => {
-    //         URL.revokeObjectURL(url)
-    //         resolve(img)
-    //     }
-    //     img.src = url
-    //     })
-    // }
+            const validation = schema.validate(cardnumber)
+
+            if(validation.error){
+                const errorDetails = validation.error.details.map(detail => detail.message)
+                return {
+                    status: false,
+                    code: 400,
+                    error: errorDetails.join(', ')
+                }
+            }
+
+            const checkUser = await mysql.query('SELECT p.address, p.phone FROM koha.borrowers p WHERE p.cardnumber = ?',
+            [cardnumber])
+
+            if(checkUser.length == 0) {
+                return {
+                    status: false,
+                    code: 404,
+                    error: 'User not found'
+                }
+            }
+
+            return {
+                status: true,
+                data: {
+                    address: checkUser[0].address,
+                    phone: checkUser[0].phone
+                }
+            }
+        } catch (error) {
+            console.error('Get Data User auth module Error: ', error)
+            return {
+                status: false,
+                error
+            }
+        }
+    }
 
     getImageUser = async (cardnumber) => {
         try {
@@ -205,7 +234,8 @@ class _auth {
                 }
             }
 
-            const checkUser = await mysql.query('SELECT p.cardnumber, p.categorycode ,p.surname, p.dateexpiry, p.address, p.phone FROM koha.borrowers p WHERE p.cardnumber = ?', [cardnumber])
+            const checkUser = await mysql.query('SELECT p.cardnumber, p.categorycode ,p.surname, p.dateexpiry, p.address, p.phone FROM koha.borrowers p WHERE p.cardnumber = ?', 
+            [cardnumber])
 
             if(checkUser.length == 0) {
                 return {

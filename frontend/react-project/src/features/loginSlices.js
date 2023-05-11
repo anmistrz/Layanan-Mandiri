@@ -73,7 +73,7 @@ export const updateUser = createAsyncThunk(
         console.log('args updaetUser:',args)
 
         try {
-            const res = await API.updateUser(args);
+            const res = await API.updateProfile(args);
             console.log('res updateUser: ', res);
             return res.data.data;
         } catch (err) {
@@ -95,10 +95,10 @@ export const loginReducer = createSlice({
         triggerLogin: false,
     },
     reducers: {
-        setTriggerLogin: (state, action) => {
-            state.trigger = action.payload;
-            // console.log('state login: ', state.trigger);
-        },
+        // setTriggerLogin: (state, action) => {
+        //     state.trigger = action.payload;
+        //     // console.log('state login: ', state.trigger);
+        // },
         setAutomaticLogout: (state, action) => {
             Cookies.delCookies('CERT')
         },
@@ -107,8 +107,12 @@ export const loginReducer = createSlice({
             state.token = null;
             state.loading = false;
             state.error = null;
-            state.trigger = !state.trigger;
+            // state.triggerLogin = !state.triggerLogin;
             Cookies.delCookies('CERT')
+        },
+
+        setTriggerUpdateProfile: (state, action) => {
+            state.triggerLogin = action.payload
         }
     },
     extraReducers: (builder) => {
@@ -147,7 +151,7 @@ export const loginReducer = createSlice({
                 state.loading = false;
                 state.error = null;
                 Cookies.setCookies ("CERT", action.payload.token, {datetime: parseISO(action.payload.expiredAt)});
-                state.trigger = !state.trigger;
+                // state.triggerLogin = !state.triggerLogin;
         }),
 
         
@@ -188,12 +192,11 @@ export const loginReducer = createSlice({
             state.users = action.payload;
             state.loading = false;
             state.error = null;
-            state.trigger = !state.trigger;
         })
     }
 
 });
 
 
-export const { setTriggerLogin, setAutomaticLogout, setLogoutUser } = loginReducer.actions;
+export const { setTriggerLogin, setAutomaticLogout, setLogoutUser, setTriggerUpdateProfile } = loginReducer.actions;
 export default loginReducer.reducer;

@@ -81,7 +81,13 @@ const ModalPinjaman = (props) => {
                         isClosable: true,
                     })
                 }else{
-                    return dispatch(getIssues(InputBarcodeCheckout.barcode))
+                    return (
+                        dispatch(getIssues(InputBarcodeCheckout.barcode)),
+                        setTimeout(() => {
+
+                            setInputBarcodeCheckout("")
+                        }, 1000)
+                    )
                 }
             }
         } catch (error) {
@@ -193,7 +199,7 @@ const ModalPinjaman = (props) => {
     // }, [stateRenew.trigger])
 
     return (
-        <>
+        <>       
             {props.type === "CHECKOUT" ? (
                 <Modal isCentered isOpen={props.isOpen} onClose={props.onClose} size="3xl">
                     <ModalOverlay />
@@ -279,7 +285,7 @@ const ModalPinjaman = (props) => {
                     </ModalContent>
                 </Modal>
             ) :
-            props.type === "RENEW" ? (
+            props.type === "RENEW" && (
                 <Modal isOpen={props.isOpen} onClose={props.onClose} size="xl">
                     <ModalOverlay />
                     <ModalContent>
@@ -380,38 +386,9 @@ const ModalPinjaman = (props) => {
                         )}
 
                     </ModalContent>
-                </Modal>
-            ) :
-            props.type === "RETURN" ? (
-                <Modal isCentered isOpen={props.isOpen} onClose={props.onClose} size="xl">
-                    <ModalOverlay />
-                    <ModalContent>
-                        <ModalHeader>Return</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody>
-                        <FormLabel>Masukkan Barcode</FormLabel>
-                            <Box display="flex" flexDirection="column" alignItems="center">
-                                <Input
-                                    name="barcode"
-                                    placeholder="Masukkan Barcode"
-                                    // onChange={handleInputCheckout}
-                                />
-                            </Box>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button colorScheme="blue" mr={3} onClick={props.onClose}>
-                                Close
-                            </Button>
-                        </ModalFooter>
-                    </ModalContent>
-                </Modal>
-            ) : (
-                null
-            )
-            }
-                        
+                </Modal> 
+            )}                      
         </>
-
     )
 }
 

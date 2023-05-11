@@ -22,6 +22,7 @@ const getDetailRenew = (id) => Get(`/renew/${id}`);
 const getMySuggest = () => Get("/suggest/list");
 const getDetailSuggest = (id) => Get(`/suggest/list/${id}`);
 const getPhotoProfile = () => Get("/login/user/image");
+const getDataUser = () => Get("/login/user/list");
 
 
 
@@ -53,6 +54,7 @@ const API = {
     getDetailSuggest,
     getPhotoProfile,
     updateProfile,
+    getDataUser,
 
 }
 

@@ -27,7 +27,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Cookies from "../utils/cookies"
 import { useNavigate } from "react-router-dom";
 import { set } from "date-fns";
-import { setAutomaticLogout } from "../features/loginSlices";
+import { setAutomaticLogout, setTriggerUpdateProfile } from "../features/loginSlices";
 import API from "../services";
 import ModalProfile from "../Components/Modal/ModalProfile";
 
@@ -39,6 +39,7 @@ const dashboardUser = () => {
     const [type, setType] = useState('')
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [urlImage, setUrlImage] = useState('')
+    const [dataUser, setDataUser] = useState({})
     const navigate = useNavigate()
     const [data, setData] = useState({})
     const dispatch = useDispatch()
@@ -50,6 +51,17 @@ const dashboardUser = () => {
             dispatch(setAutomaticLogout())
             navigate('/index')
         }, stateLogin.users.duration)
+    }
+
+
+    const getDataUser = async() => {
+        try {
+            const res = await API.getDataUser()
+            console.log("res user", res.data)
+            setDataUser(res.data)
+        } catch(error){
+            return error
+        }
     }
 
     const getPhotoProfile = async() => {
@@ -68,6 +80,7 @@ const dashboardUser = () => {
             setData(dataCookies)
         console.log("data cookies", dataCookies)
         // timeoutCookies()
+        getDataUser()
         getPhotoProfile()
     }, [])
 
@@ -92,9 +105,18 @@ const dashboardUser = () => {
 
     }, [urlImage])
 
+
+    useEffect(() => {
+        getDataUser()
+        console.log("ini jalan nggak ???")
+        setTimeout(() => {
+            dispatch(setTriggerUpdateProfile(false))
+        }, 1000);
+    },[stateLogin.triggerLogin])
+
     return (
         <>
-            <div className="container mx-auto h-screen">
+            <div className="container mx-auto h-full">
                 <Navbar />
                 <HStack spacing={4} w='100%' align="center"  my="5">
                     <Box w='20%' h="580px" p='5px' >
@@ -128,8 +150,8 @@ const dashboardUser = () => {
                                 </Heading>
                             )}
                             
-                            <Text fontSize='sm' my={1} textAlign='center'>{stateLogin.users.address}</Text>
-                            <Text fontSize='sm' my={1} textAlign='center'>{stateLogin.users.phone}</Text>
+                            <Text fontSize='sm' my={1} textAlign='center'>{dataUser.address}</Text>
+                            <Text fontSize='sm' my={1} textAlign='center'>{dataUser.phone}</Text>
 
                             {/* <Heading fontSize='lg' my={3} textAlign='center'>Status : 
                                     {(new Date() > new Date(data.dateexpiry)) ? (
@@ -147,7 +169,7 @@ const dashboardUser = () => {
                                 onClick= {() => {
                                     setType('PROFILE')
                                     onOpen()
-                                    setSelectedProfile({address: stateLogin.users.address, phone: stateLogin.users.phone})
+                                    setSelectedProfile({address: dataUser.address, phone: dataUser.phone})
                                 }}>
                                     Update Profile
                                 </Button>
