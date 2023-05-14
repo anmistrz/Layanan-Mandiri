@@ -81,7 +81,7 @@ class _checkin {
         }
     }
 
-    listMyPending = async (cardnumber) => {
+    listMyChekin = async (cardnumber) => {
         try {
 
             const schema = Joi.string().required()
@@ -97,7 +97,7 @@ class _checkin {
                 }
             }
 
-            const list = await mysql.query("SELECT b.surname, b1.title, i.renewals, i.returndate, i.status FROM koha.borrowers b LEFT JOIN koha.issues_pending i ON i.borrowernumber = b.borrowernumber LEFT JOIN koha.items i2 ON i2.itemnumber = i.itemnumber LEFT JOIN koha.biblio b1 ON b1.biblionumber = i2.biblionumber WHERE i.status = 'CHECKIN PENDING' AND b.cardnumber = ?;",
+            const list = await mysql.query("SELECT b.surname, b1.title, i.renewals, i.returndate FROM koha.borrowers b LEFT JOIN koha.old_issues i ON i.borrowernumber = b.borrowernumber LEFT JOIN koha.items i2 ON i2.itemnumber = i.itemnumber LEFT JOIN koha.biblio b1 ON b1.biblionumber = i2.biblionumber WHERE  b.cardnumber = ?;",
             [cardnumber])
 
             return {

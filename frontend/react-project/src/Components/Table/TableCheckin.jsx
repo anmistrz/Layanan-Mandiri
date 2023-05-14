@@ -13,10 +13,11 @@ import API from '../../services';
 import { useDispatch, useSelector } from 'react-redux'
 import ModalSuggest from '../Modal/ModalSuggest';
 import { DetailSuggest, deleteSuggest, setTriggerSuggest, updateSuggest } from '../../features/suggestSlices';
+import { set } from 'date-fns';
 
-const TableSuggest = () => {
+const TableChekin = () => {
 
-    const [dataSuggest, setDataSuggest] = useState([])
+    const [dataChekin, setDataChekin] = useState([])
     const [selectedSuggest, setSelectedSuggest] = useState({})
     const [type, setType] = useState('')
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -31,139 +32,122 @@ const TableSuggest = () => {
     })
 
 
-    const getDataMySuggest = async () => {
+    const getDataMyChekin = async () => {
         try {
-            const res = await API.getMySuggest()
+            const res = await API.getListMyCheckin()
             console.log("res", res.data)
-            setDataSuggest(res.data)
+            setDataChekin(res.data)
         } catch (error) {
             console.log("error", error)
         }
     }
 
-    const handleModalSuggest = (data) => {
-        setType('EDIT_SUGGEST')
-        console.log("data modal suggest", data)
-        dispatch(DetailSuggest(data.suggestionid))
-        dispatch(setTriggerSuggest(true))
-        setSelectedSuggest(data.suggestionid)
-        setTimeout(() => {
-            onOpen()
-        }, 100);
-    }
+    // const handleModalSuggest = (data) => {
+    //     setType('EDIT_SUGGEST')
+    //     console.log("data modal suggest", data)
+    //     dispatch(DetailSuggest(data.suggestionid))
+    //     dispatch(setTriggerSuggest(true))
+    //     setSelectedSuggest(data.suggestionid)
+    //     setTimeout(() => {
+    //         onOpen()
+    //     }, 100);
+    // }
 
-    const handleDeleteSuggest = (id) => {
-        try {
-            dispatch(deleteSuggest(id))
-            dispatch(setTriggerSuggest(true))
-            toast({
-                title: 'Delete Suggest a Book',
-                description: 'Delete Ulasan Berhasil',
-                status: 'success'
-            })
-            onClose()
+    // const handleDeleteSuggest = (id) => {
+    //     try {
+    //         dispatch(deleteSuggest(id))
+    //         dispatch(setTriggerSuggest(true))
+    //         toast({
+    //             title: 'Delete Suggest a Book',
+    //             description: 'Delete Ulasan Berhasil',
+    //             status: 'success'
+    //         })
+    //         onClose()
 
-        } catch (error) {
-            console.log("error", error)
-            toast({
-                title: 'Delete Suggest a Book',
-                description: 'Delete Ulasan Gagal',
-                status: 'error'
-            })
-        }
-    }
+    //     } catch (error) {
+    //         console.log("error", error)
+    //         toast({
+    //             title: 'Delete Suggest a Book',
+    //             description: 'Delete Ulasan Gagal',
+    //             status: 'error'
+    //         })
+    //     }
+    // }
 
     useEffect(() => {
-        getDataMySuggest()
+        getDataMyChekin()
     }, [states.trigger])
 
 
-    useEffect(() => {
-        getDataMySuggest()
-        setTimeout(() => {
-            dispatch(setTriggerSuggest(false))
-        }, 1000);
-    }, [stateSuggest.triggerSuggest])
+    // useEffect(() => {
+    //     getDataMyChekin()
+    //     setTimeout(() => {
+    //         dispatch(setTriggerSuggest(false))
+    //     }, 1000);
+    // }, [stateSuggest.triggerSuggest])
 
 
     const data = useMemo(
-        () => dataSuggest,
-        [dataSuggest]
+        () => dataChekin,
+        [dataChekin]
     )
 
     const columns = useMemo(
         () => [
 
             {
-                Header: 'Tanggal Ulasan',
-                accessor: 'suggesteddate',
+                Header: 'Nama Peminjam',
+                accessor: 'surname',
             },
             {
                 Header: 'Nama Buku',
                 accessor: 'title',
-                Cell: ({ row }) => {
-                    return (
-                        <>
-                            <Box display="flex" flexDirection='column'>
-                                <VisuallyHidden>{row.original.suggestionid}</VisuallyHidden>
-                                <Text fontWeight="bold">{row.original.title}</Text>
-                                <span className="text-sm text-gray-500">
-                                    .....................................................
-                                </span>
-                                <span className="text-sm text-gray-500">
-                                    <MdOutlineMessage className="inline-block mr-1 mb-1" /> {row.original.note}
-                                </span>
-                            </Box>
-
-                        </>
-                    )
-                },
             },
             {
-                Header: 'Author',
-                accessor: 'author',
+                Header: 'Jumlah Perpanjangan peminjaman',
+                accessor: 'renewals',
             },
             {
-                Header: 'Publisher Code',
-                accessor: 'publishercode',
+                Header: 'Tanggal Pengembalian',
+                accessor: 'returndate',
             },
-            {
-                Header: 'Status',
-                accessor: 'STATUS',
-                Cell: ({ row }) => (
-                    <div>
-                        {row.original.STATUS === 'PENDING' ? (
-                            <span className="text-yellow-500">
-                                <Badge colorScheme="yellow">{row.original.STATUS}</Badge>
-                            </span>
-                        ) : row.original.STATUS === 'ACCEPTED' ? (
-                            <span className="text-green-500">
-                                <Badge colorScheme="green">{row.original.STATUS}</Badge>
-                            </span>
-                        ) : row.original.STATUS === 'REJECTED' ? (
-                            <span className="text-red-500">
-                                <Badge colorScheme="red">{row.original.STATUS}</Badge>
-                            </span>
-                        ) : (
-                            <span className="text-blue-500">
-                                <Badge colorScheme="blue">{row.original.STATUS}</Badge>
-                            </span>
-                        )}
-                    </div>
-                ),
-            },
-            {
-                accessor: 'suggestionid',
-                Cell: ({ row }) => (
-                    <VisuallyHidden>
-                        <span>{row.original.suggestionid}</span>
-                    </VisuallyHidden>
-                ),
-            },
-            {
-                Header: 'Options',
-                accessor: ''
-            },
+            // {
+            //     Header: 'Status',
+            //     accessor: 'STATUS',
+            //     Cell: ({ row }) => (
+            //         <div>
+            //             {row.original.STATUS === 'PENDING' ? (
+            //                 <span className="text-yellow-500">
+            //                     <Badge colorScheme="yellow">{row.original.STATUS}</Badge>
+            //                 </span>
+            //             ) : row.original.STATUS === 'ACCEPTED' ? (
+            //                 <span className="text-green-500">
+            //                     <Badge colorScheme="green">{row.original.STATUS}</Badge>
+            //                 </span>
+            //             ) : row.original.STATUS === 'REJECTED' ? (
+            //                 <span className="text-red-500">
+            //                     <Badge colorScheme="red">{row.original.STATUS}</Badge>
+            //                 </span>
+            //             ) : (
+            //                 <span className="text-blue-500">
+            //                     <Badge colorScheme="blue">{row.original.STATUS}</Badge>
+            //                 </span>
+            //             )}
+            //         </div>
+            //     ),
+            // },
+            // {
+            //     accessor: 'suggestionid',
+            //     Cell: ({ row }) => (
+            //         <VisuallyHidden>
+            //             <span>{row.original.suggestionid}</span>
+            //         </VisuallyHidden>
+            //     ),
+            // },
+            // {
+            //     Header: 'Options',
+            //     accessor: ''
+            // },
         ],
         []
     )
@@ -190,7 +174,7 @@ const TableSuggest = () => {
         // defaultColumn, // Be sure to pass the defaultColumn option
     }, useFilters, useGlobalFilter, useSortBy, usePagination, useRowSelect)
 
-    const { globalFilter, pageIndex, pageSize, } = state
+    const { globalFilter, pageIndex, pageSize, selectedFlatRows } = state
     const firstPageRows = rows.slice(0, pageSize)
 
 
@@ -200,16 +184,7 @@ const TableSuggest = () => {
                 <div className="container mx-auto px-4 sm:px-8">
                     <div className="py-8">
                         <div>
-                            <h2 className="text-lg font-semibold leading-tight">List Usulan Buku</h2>
-                            <Button colorScheme="blue" size="sm" className="float-right py-5 px-2 gap-2"
-                                value='SUGGEST'
-                                onClick={(e) => {
-                                    setType(e.target.value)
-                                    onOpen()
-                                }}
-                            >
-                                <MdOutlineLibraryAdd /> Tambah Usulan Buku
-                            </Button>
+                            <h2 className="text-lg font-semibold leading-tight">List Pengembalian Buku</h2>
                         </div>
 
                         <div className="my-4 flex sm:flex-row flex-col">
@@ -281,7 +256,7 @@ const TableSuggest = () => {
                                                                     <div className="">
                                                                         <div className="ml-3">
                                                                             <p className=" text-gray-900 whitespace-no-wrap">
-                                                                                {cell.column.Header === 'Tanggal Ulasan' ? (
+                                                                                {cell.column.Header === 'Tanggal Pengembalian' ? (
                                                                                     new Date(cell.value).toLocaleDateString("id-ID", {
                                                                                         weekday: 'long', year:
                                                                                             'numeric', month:
@@ -380,4 +355,4 @@ const TableSuggest = () => {
 }
 
 
-export default TableSuggest;
+export default  TableChekin;

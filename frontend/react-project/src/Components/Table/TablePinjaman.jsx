@@ -257,7 +257,7 @@ const TablePinjaman = () => {
                                                     ))}
                                                 </thead>
                                                 <tbody {...getTableBodyProps()}>
-                                                    {firstPageRows.map(row => {
+                                                    {page.map(row => {
                                                         prepareRow(row)
                                                         return (
                                                             <tr {...row.getRowProps()}>

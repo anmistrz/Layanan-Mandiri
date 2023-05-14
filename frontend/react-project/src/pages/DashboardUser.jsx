@@ -30,6 +30,7 @@ import { set } from "date-fns";
 import { setAutomaticLogout, setTriggerUpdateProfile } from "../features/loginSlices";
 import API from "../services";
 import ModalProfile from "../Components/Modal/ModalProfile";
+import TableChekin from "../Components/Table/TableCheckin";
 
 
 const dashboardUser = () => {
@@ -191,7 +192,7 @@ const dashboardUser = () => {
                                         <TablePinjaman />
                                     </TabPanel>
                                     <TabPanel overflowY='scroll' position='relative' height='500px' mt={4}>
-                                        <p>ddfssd</p>
+                                        <TableChekin />
                                     </TabPanel>
                                     <TabPanel overflowY='scroll' position='relative' height='500px' mt={4}>
                                         <TableSuggest />

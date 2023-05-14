@@ -20,6 +20,7 @@ import {
 } from '@chakra-ui/react'
 import Images from '../assets/perpus.png'
 import { MdOutlineArrowForward } from 'react-icons/md'
+import { SlSocialDropbox } from 'react-icons/sl'
 import { useNavigate, useLocation } from "react-router-dom";
 import parseJwt from "../utils/parseJwt";
 import { useDispatch, useSelector } from "react-redux";
@@ -138,6 +139,9 @@ const Navbar = () => {
                 <Spacer />
                 {location.pathname === '/index' ? (
                     <Center>
+                        <Button mr={4} leftIcon={<SlSocialDropbox />} colorScheme='green' variant='outline'>
+                            Pengembalian Buku
+                        </Button>
                         <Button onClick={onOpen} rightIcon={<MdOutlineArrowForward />} colorScheme='red' variant='outline'>
                             Back to Homepage
                         </Button>

@@ -31,6 +31,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { addSuggest, updateSuggest, setTriggerSuggest } from "../../features/suggestSlices";
 import { MdOutlineWarningAmber } from 'react-icons/md';
+import { useFormik } from "formik";
+import { SUGGEST_VALIDATION } from "../../validation/validation";
 
 
 const ModalSuggest = (props) => {
@@ -45,85 +47,83 @@ const ModalSuggest = (props) => {
         duration: 2000
     })
 
-    const handleInputSuggest = (e) => {
-        setDataInputSuggest({
-            ...DataInputSuggest,
-            [e.target.id]: e.target.value
-        })
-    }
 
-    const handleSubmitSuggest = (data) => {
-        try {
-            dispatch(addSuggest(data))
-            dispatch(setTriggerSuggest(true))
-            toast({
-                title: 'Suggest a Book',
-                description: 'Tambah Ulasan Berhasil',
-                status: 'success'
-            })
-            props.onClose()
+    const formikInput = useFormik({
+        initialValues: {
+            title: '',
+            author: '',
+            publishercode: '',
+            note: ''
+        },
 
-        } catch (error) {
-            toast({
-                title: 'Suggest a Book',
-                description: 'Tambah Ulasan Gagal',
-                status: 'error'
-            })
+        onSubmit: (values) => {
+            try {
+                dispatch(addSuggest(values))
+                dispatch(setTriggerSuggest(true))
+                toast({
+                    title: 'Suggest a Book',
+                    description: 'Tambah Ulasan Berhasil',
+                    status: 'success'
+                })
+                props.onClose()
+            } catch (error) {
+                toast({
+                    title: 'Suggest a Book',
+                    description: 'Tambah Ulasan Gagal',
+                    status: 'error'
+                })
+            }
+        },
+
+        validationSchema: SUGGEST_VALIDATION
+    })
+    
+
+    const formik = useFormik({
+        initialValues: {
+            suggestionid: stateSuggest.suggest.suggestionid,
+            title: stateSuggest.suggest.title,
+            author: stateSuggest.suggest.author,
+            publishercode: stateSuggest.suggest.publishercode,
+            note: stateSuggest.suggest.note
+        },
+
+        enableReinitialize: true, // To set value from props into initialValues
+
+        onSubmit: (values) => {
+            try {
+                dispatch(updateSuggest(values))
+                dispatch(setTriggerSuggest(true))
+                console.log("values edit suggest", values)
+                toast({
+                    title: 'Edit Suggest a Book',
+                    description: 'Edit Usulan Berhasil',
+                    status: 'success'
+                })
+                props.onClose()
+            } catch (error) {
+                toast({
+                    title: 'Edit Suggest a Book',
+                    description: 'Edit Usulan Gagal',
+                    status: 'error'
+                })
+            }
         }
-    }
-
-    const handleEditSuggest = (data) => {
-        try {
-            dispatch(updateSuggest(data))
-            dispatch(setTriggerSuggest(true))
-            toast({
-                title: 'Edit Suggest a Book',
-                description: 'Edit Ulasan Berhasil',
-                status: 'success'
-            })
-            props.onClose()
-        
-        } catch (error) {
-            toast({
-                title: 'Edit Suggest a Book',
-                description: 'Edit Ulasan Gagal',
-                status: 'error'
-            })
-        }
-    }
+    })
 
 
-    const handleDeleteSuggest = (id) => {
-        try {
-            dispatch(deleteSuggest(id))
-            dispatch(setTriggerSuggest(true))
-            toast({
-                title: 'Delete Suggest a Book',
-                description: 'Delete Ulasan Berhasil',
-                status: 'success'
-            })
-            props.onClose()
-
-        } catch (error) {
-            toast({
-                title: 'Delete Suggest a Book',
-                description: 'Delete Ulasan Gagal',
-                status: 'error'
-            })
-        }
-    }
 
 
-    useEffect(() => {
-        console.log("DataInputSuggest", DataInputSuggest)
-    }, [DataInputSuggest])
+    // useEffect(() => {
+    //     console.log("DataInputSuggest", DataInputSuggest)
+    // }, [DataInputSuggest])
 
-    useEffect(() => {
-        setDataInputSuggest({
-            ...DataInputSuggest,
-            suggestionid: props.data
-        })
-    }, [props.data])
+    // useEffect(() => {
+    //     setDataInputSuggest({
+    //         ...DataInputSuggest,
+    //         suggestionid: props.data
+    //     })
+    // }, [props.data])
 
     return (
         <>
@@ -133,125 +133,123 @@ const ModalSuggest = (props) => {
                     <ModalContent>
                         <ModalHeader>Usulan Buku</ModalHeader>
                         <ModalCloseButton />
-                        <ModalBody>
-                            <FormControl id="title" mt={4} isRequired>
-                                <FormLabel>Title</FormLabel>
-                                <Input type="text" onChange={handleInputSuggest} />
-                            </FormControl>
-                            <FormControl id="author" mt={4}>
-                                <FormLabel>Author</FormLabel>
-                                <Input type="text" onChange={handleInputSuggest} />
-                            </FormControl>
-                            <FormControl id="publishercode" mt={4}>
-                                <FormLabel>Publisher</FormLabel>
-                                <Input type="text" onChange={handleInputSuggest} />
-                            </FormControl>
-                            <FormControl id="note" mt={4}>
-                                <FormLabel>Description</FormLabel>
-                                <Textarea type="text" onChange={handleInputSuggest} />
-                            </FormControl>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button colorScheme="red" mr={3} onClick={props.onClose}>
-                                Close
-                            </Button>
-                            <Button colorScheme="blue"
-                                onClick={() => {
-                                    handleSubmitSuggest(DataInputSuggest)
-                                }}
-
-                            >
-                                Tambah Usulan
-                            </Button>
-                        </ModalFooter>
+                        <form onSubmit={formikInput.handleSubmit}>
+                            <ModalBody>
+                                <FormControl id="title" mt={4}>
+                                    <FormLabel>Title</FormLabel>
+                                    {formikInput.errors.title && formikInput.touched.title && (
+                                        <Alert status="error">
+                                            <AlertIcon />
+                                            <AlertDescription>{formikInput.errors.title}</AlertDescription>
+                                        </Alert>
+                                    )}
+                                    <Input type="text" name="title" onChange={formikInput.handleChange} />
+                                </FormControl>
+                                <FormControl id="author" mt={4}>
+                                    <FormLabel>Author</FormLabel>
+                                    {formikInput.errors.author && formikInput.touched.author && (
+                                        <Alert status="error">
+                                            <AlertIcon />
+                                            <AlertDescription>{formikInput.errors.author}</AlertDescription>
+                                        </Alert>
+                                    )}
+                                    <Input type="text" name="author" onChange={formikInput.handleChange} />
+                                </FormControl>
+                                <FormControl id="publishercode" mt={4}>
+                                    <FormLabel>Publisher</FormLabel>
+                                    {formikInput.errors.publishercode && formikInput.touched.publishercode && (
+                                        <Alert status="error">
+                                            <AlertIcon />
+                                            <AlertDescription>{formikInput.errors.publishercode}</AlertDescription>
+                                        </Alert>
+                                    )}
+                                    <Input type="text" name="publishercode" onChange={formikInput.handleChange} />
+                                </FormControl>
+                                <FormControl id="note" mt={4}>
+                                    <FormLabel>Description</FormLabel>
+                                    {formikInput.errors.note && formikInput.touched.note && (
+                                        <Alert status="error">
+                                            <AlertIcon />
+                                            <AlertDescription>{formikInput.errors.note}</AlertDescription>
+                                        </Alert>
+                                    )}
+                                    <Textarea type="text" name="note" onChange={formikInput.handleChange} />
+                                </FormControl>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button colorScheme="red" mr={3} onClick={props.onClose}>
+                                    Close
+                                </Button>
+                                <Button 
+                                    colorScheme="blue"
+                                    // onClick={() => {
+                                    //     handleSubmitSuggest(DataInputSuggest)
+                                    // }}
+                                    type="submit"
+                                    isLoading={formik.isSubmitting}
+                                >
+                                    Tambah Usulan
+                                </Button>
+                            </ModalFooter>
+                        </form>
                         </ModalContent>
                         </Modal>
             ) : 
-            props.type === 'EDIT_SUGGEST' ? (
+            props.type === 'EDIT_SUGGEST' && (
                 <Modal isOpen={props.isOpen} onClose={props.onClose} size='xl'>
                     <ModalOverlay />
                     <ModalContent>
                         <ModalHeader>Edit Usulan Buku</ModalHeader>
                         <ModalCloseButton />
-                        <ModalBody>
-                            { stateSuggest.loading ? (
-                                <Center>
-                                    <Spinner 
-                                        thickness="4px"
-                                        speed="0.65s"
-                                        emptyColor="gray.200"
-                                        color="blue.500"
-                                        size="xl"
-                                    />
-                                </Center>
-                            ) : (
-                                <>
-                                    <FormControl id="title" mt={4} isRequired>
-                                        <FormLabel>Title</FormLabel>
-                                        <Input type="text" id='title' 
-                                        onChange={handleInputSuggest}
-                                        defaultValue={stateSuggest.suggest.title} 
+                        <form onSubmit={formik.handleSubmit}>
+                            <ModalBody>
+                                { stateSuggest.loading ? (
+                                    <Center>
+                                        <Spinner 
+                                            thickness="4px"
+                                            speed="0.65s"
+                                            emptyColor="gray.200"
+                                            color="blue.500"
+                                            size="xl"
                                         />
-                                    </FormControl>
-                                    <FormControl id="author" mt={4}>
-                                        <FormLabel>Author</FormLabel>
-                                        <Input type="text" onChange={handleInputSuggest}  defaultValue={stateSuggest.suggest.author} />
-                                    </FormControl>
-                                    <FormControl id="publishercode" mt={4}>
-                                        <FormLabel>Publisher</FormLabel>
-                                        <Input type="text" onChange={handleInputSuggest} defaultValue = {stateSuggest.suggest.publishercode} />
-                                    </FormControl>
-                                    <FormControl id="note" mt={4}>
-                                        <FormLabel>Description</FormLabel>
-                                        <Textarea type="text" onChange={handleInputSuggest} defaultValue = {stateSuggest.suggest.note} />
-                                    </FormControl>
-                                </>
-                            )}
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button colorScheme="red" mr={3} onClick={props.onClose}>
-                                Close
-                            </Button>
-                            <Button colorScheme="blue"
-                                onClick={() => {
-                                    handleEditSuggest(DataInputSuggest)
+                                    </Center>
+                                ) : (
+                                    <>
+                                        <FormControl id="title" mt={4} isRequired>
+                                            <FormLabel>Title</FormLabel>
+                                            <Input type="text" onChange={formik.handleChange} defaultValue={formik.values.title} />
+                                        </FormControl>
+                                        <FormControl id="author" mt={4}>
+                                            <Input type="text" onChange={formik.handleChange} defaultValue={formik.values.author} />
+                                        </FormControl>
+                                        <FormControl id="publishercode" mt={4}>
+                                            <Input type="text" onChange={formik.handleChange} defaultValue={formik.values.publishercode} />
+                                        </FormControl>
+                                        <FormControl id="note" mt={4}>
+                                            <Textarea type="text" onChange={formik.handleChange} defaultValue={formik.values.note} />
+                                        </FormControl>
+                                    </>
+                                )}
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button colorScheme="red" mr={3} onClick={props.onClose}>
+                                    Close
+                                </Button>
+                                <Button colorScheme="blue"
+                                    // onClick={() => {
+                                    //     handleEditSuggest(DataInputSuggest)
 
-                                    console.log("DataInput ke Edit Suggest", DataInputSuggest)
-                                }}
-                            >
-                                Edit Usulan Buku
-                            </Button>
-                        </ModalFooter>
+                                    //     console.log("DataInput ke Edit Suggest", DataInputSuggest)
+                                    // }}
+                                    type="submit"
+                                    isLoading={stateSuggest.loading}
+                                >
+                                    Edit Usulan Buku
+                                </Button>
+                            </ModalFooter>
+                        </form>
                         </ModalContent>
                         </Modal>
-            ) : (
-            // props.type === 'DELETE_SUGGEST' && (
-            //     <Modal isCentered isOpen={props.isOpen} onClose={props.onClose} size='xl'>
-            //     <ModalOverlay />
-            //     <ModalContent>
-            //         <ModalHeader>Delete Usulan Buku</ModalHeader>
-            //         <ModalCloseButton />
-            //         <ModalBody>
-            //             <Center flexDirection='column' gap={4}>
-
-            //                 <MdOutlineWarningAmber size={50} color='red' />
-            //                 <Text fontSize='md' fontWeight='bold'>Apakah anda yakin ingin menghapus usulan buku ini ?</Text>
-
-            //             </Center>
-            //         </ModalBody>
-            //         <ModalFooter>
-            //             <Button colorScheme="red" mr={3} onClick={props.onClose}>
-            //                 Close
-            //             </Button>
-            //             <Button colorScheme="blue"
-            //                 onClick={handleDeleteSuggest(DataInputSuggest.suggestionid)}
-            //             >
-            //                 Hapus Usulan
-            //             </Button>
-            //         </ModalFooter>
-            //         </ModalContent>
-            //         </Modal>
-            null
             )}
         </>
 

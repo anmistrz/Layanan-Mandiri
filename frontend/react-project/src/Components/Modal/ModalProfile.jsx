@@ -37,7 +37,6 @@ import { setTriggerUpdateProfile, updateUser } from "../../features/loginSlices"
 
 const ModalProfile = (props) => {
 
-    const [dataEdit, setDataEdit] = useState({})
     const dispatch = useDispatch()
     const toast = useToast ({
         position: 'top-right',
@@ -78,9 +77,9 @@ const ModalProfile = (props) => {
     });
 
 
-    useEffect(()=> {
-        console.log("data edit", dataEdit)
-    }, [dataEdit])
+    // useEffect(()=> {
+    //     console.log("data edit", dataEdit)
+    // }, [dataEdit])
 
     return (
         <>

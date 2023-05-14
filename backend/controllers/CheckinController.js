@@ -10,7 +10,7 @@ CheckinController.post('/user/add', userSession, async (req, res, next) => {
 })
 
 CheckinController.get('/user/list', userSession, async (req, res, next) => {
-    response.sendResponse(res, await m$checkin.listMyPending(req.user.cardnumber))
+    response.sendResponse(res, await m$checkin.listMyChekin(req.user.cardnumber))
 })
 
 CheckinController.get('/admin/list', adminSession, verifyAdmin, async (req, res, next) => {
