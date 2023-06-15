@@ -4,7 +4,8 @@ import baseAPI from "../utils/axiosConfig";
 
 const Delete = async (path, data) => {
     try {
-        const res = await baseAPI.baseAPI.delete(`${baseURL}${path}`);
+        console.log("data delete", data)
+        const res = await baseAPI.baseAPI.delete(`${baseURL}${path}`, data);
         return res;
 
     } catch (err) {

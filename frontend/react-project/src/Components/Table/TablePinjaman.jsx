@@ -1,4 +1,4 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Badge, Spinner } from '@chakra-ui/react';
 import { useState, useMemo, useEffect } from 'react'
 import { useTable, useSortBy, useFilters, useGlobalFilter, usePagination, useRowSelect } from 'react-table' 
 import {
@@ -31,8 +31,13 @@ const TablePinjaman = () => {
     const getDataPinjaman = async () => {
         try {
             const res = await API.getIssues()
-            console.log("res data pinjaman", res.data)
-            setDataPinjaman(res.data)
+            if (res.data) {
+                setTimeout(() => {
+                    dispatch(setTriggerRenew(false))
+                }, 1000);
+                console.log("res data pinjaman", res.data)
+                setDataPinjaman(res.data)
+            }
         } catch (error) {
             console.log("error", error)
         }
@@ -48,22 +53,23 @@ const TablePinjaman = () => {
         }, 100)
     }
 
-    useEffect(() => {
-        getDataPinjaman()
-    },[states.loading])
+    // useEffect(() => {
+    //     getDataPinjaman()
+    // },[states.token])
+
+    // useEffect(() => {
+    //     setDataPinjaman(stateIssue.listIssue)
+    // },[states.loading])
 
     useEffect(() => {
         getDataPinjaman()
         setTimeout(() => {
             dispatch(setTriggerIssue(false))
-        }, 1000);
+        }, 500);
     },[stateIssue.triggerIssue])
 
     useEffect(() => {
         getDataPinjaman()
-        setTimeout(() => {
-            dispatch(setTriggerRenew(false))
-        }, 1000);
     },[stateRenew.triggerRenew])
 
     // useEffect(() => {
@@ -85,6 +91,8 @@ const TablePinjaman = () => {
             dispatch(setRefreshRenew(selectedData.barcode))
     },[selectedData])
 
+
+
     const data = useMemo(
         () => dataPinjaman,
         [dataPinjaman]
@@ -101,10 +109,11 @@ const TablePinjaman = () => {
                             <Box>
                                 {overdue ? (
                                     <Tooltip label="Overdue" aria-label="Overdue">
-                                        <Button colorScheme="red" variant="ghost" size="sm" leftIcon={<MdOutlineWarningAmber/>}>
-                                            {new Date(row.original.date_due).toLocaleDateString("id-ID", 
+                                        <Badge colorScheme="red" variant="outline" className="text-center gap-1" display="flex" alignItems="center" justifyContent="center">
+                                            <MdOutlineWarningAmber />
+                                            {new Date(row.original.date_due).toLocaleDateString("id-ID",
                                             { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                                        </Button>
+                                        </Badge>
                                     </Tooltip>
                                 ) : (
                                     <span color="black">
@@ -171,11 +180,11 @@ const TablePinjaman = () => {
 
     return (
         <>
-            <div className="bg-white shadow-md rounded my-6">
+            <div className="bg-white shadow-md rounded">
                 <div className="container mx-auto px-4 sm:px-8">
-                    <div className="py-8">
+                    <div className="py-2">
                         <div>
-                            <h2 className="text-lg font-semibold leading-tight">List Pinjaman Buku</h2>
+                            <h2 className="text-lg font-semibold leading-tight pt-2">List Pinjaman Buku</h2>
                             <Button colorScheme="blue" size="sm" className="float-right py-5 px-2 gap-2"
                                 value='CHECKOUT'
                                 onClick={(e) => {
@@ -224,111 +233,94 @@ const TablePinjaman = () => {
                         </div>
                         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                             <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-                                {/* {stateIssue.isLoading ? (
-                                    <Center>
-                                        <Spinner 
-                                        thickness='4px'
-                                        speed='0.65s'
-                                        emptyColor='gray.200'
-                                        color='blue.500'
-                                        size='xl'
-                                        />
-                                    </Center>
-                                    ) : (
-                                    <> */}
-                                        {(rows.length > 0) ? (
-                                            <table {...getTableProps()} className="min-w-full leading-normal">
-                                                <thead>
-                                                    {headerGroups.map(headerGroup => (
-                                                        <tr {...headerGroup.getHeaderGroupProps()}>
-                                                            {headerGroup.headers.map(column => (
-                                                                <th {...column.getHeaderProps(column.getSortByToggleProps())} className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                                                    {column.render('Header')}
-                                                                    <span>
-                                                                        {column.isSorted
-                                                                        ? column.isSortedDesc
-                                                                            ? ' 🔽'
-                                                                            : ' 🔼'
-                                                                        : ''}
-                                                                    </span>
-                                                                </th>
-                                                            ))}
-                                                        </tr>
-                                                    ))}
-                                                </thead>
-                                                <tbody {...getTableBodyProps()}>
-                                                    {page.map(row => {
-                                                        prepareRow(row)
-                                                        return (
-                                                            <tr {...row.getRowProps()}>
-                                                                {row.cells.map(cell => {
-                                                                    return (
-                                                                        <td {...cell.getCellProps()} className=" text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                                                            <div className="">
-                                                                                <div className="ml-3">
-                                                                                    <p className=" text-gray-900 whitespace-no-wrap">
-                                                                                        {/* {cell.column.Header === 'Deadline Peminjaman' ? (
-                                                                                            new Date(cell.value).toLocaleDateString("id-ID", {
-                                                                                                weekday: 'long', year:
-                                                                                                    'numeric', month:
-                                                                                                    'long', day: 'numeric'
-                                                                                            })
-                                                                                        ) : 
-                                                                                        cell.column.Header === 'Perpanjangan Peminjaman' ? (
-                                                                                            String(cell.value))
-                                                                                        : (
-                                                                                            cell.render('Cell')
-                                                                                        )} */}
-                                                                                        {cell.render('Cell')}
-                                                                                    </p>
-                                                                                </div>
-                                                                            </div>
-                                                                            {(cell.column.Header === 'Options') ? (
-                                                                                <div className='flex items-center gap-2'>
-                                                                                    <Tooltip label='Renew Book' fontSize='md'>
-                                                                                        <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 font-bold rounded"
-                                                                                            type='RENEW'
-                                                                                            onClick={() => {
-                                                                                                handleModalRenew(cell.row.values)
-                                                                                            }}
-                                                                                        >
-                                                                                            <MdOutlineAutorenew />
-                                                                                        </button>
-                                                                                    </Tooltip>
-                                                                                    {/* <Tooltip label='Return Book' fontSize='md'>
-                                                                                        <button className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 font-bold  rounded"
-                                                                                            type='RETURN'
-                                                                                            onClick={() => {
-                                                                                                setType('RETURN')
-                                                                                                onOpen()
-                                                                                            }}
-                                                                                        >              
-                                                                                            <MdOutlineAssignmentReturned />
-                                                                                        </button>
-                                                                                    </Tooltip> */}
-                                                                                </div>
-                                                                                ) : (
-                                                                                    <div></div>
-                                                                            )}
-                                                                        </td>
-                                                                    )
-                                                                })}
+
+                                <Box overflowY="auto" overflowX="hidden" maxHeight='280px' >
+                                    {states.loading ? (
+                                        <Spinner />
+                                        ) : 
+                                        (rows.length > 0) ? (
+                                                <table {...getTableProps()} className="min-w-full leading-normal">
+                                                    <thead position="sticky" className="sticky top-0">
+                                                        {headerGroups.map(headerGroup => (
+                                                            <tr {...headerGroup.getHeaderGroupProps()}>
+                                                                {headerGroup.headers.map(column => (
+                                                                    <th {...column.getHeaderProps(column.getSortByToggleProps())} className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                                                        {column.render('Header')}
+                                                                        <span>
+                                                                            {column.isSorted
+                                                                            ? column.isSortedDesc
+                                                                                ? ' 🔽'
+                                                                                : ' 🔼'
+                                                                            : ''}
+                                                                        </span>
+                                                                    </th>
+                                                                ))}
                                                             </tr>
-                                                        )
-                                                    })}
-                                                </tbody>
-                                            </table>
-                                    ) : (
-                                        <div className='flex justify-center items-center h-64'>
-                                            <div className='flex flex-col justify-center items-center'>
-                                                {/* <img src={Empty} alt='empty' className='w-64 h-64' /> */}
-                                                <MdOutlineInfo className='w-10 h-10 text-gray-500' />
-                                                <p className='text-2xl font-bold text-gray-500'>Tidak ada pinjaman</p>
+                                                        ))}
+                                                    </thead>
+                                                    <tbody {...getTableBodyProps()}>
+                                                        {page.map(row => {
+                                                            prepareRow(row)
+                                                            return (
+                                                                <tr {...row.getRowProps()}>
+                                                                    {row.cells.map(cell => {
+                                                                        return (
+                                                                            <td {...cell.getCellProps()} className=" text-center px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                                                                <div className="">
+                                                                                    <div className="ml-3">
+                                                                                        <p className=" text-gray-900 whitespace-no-wrap">
+                                                                                            {/* {cell.column.Header === 'Deadline Peminjaman' ? (
+                                                                                                new Date(cell.value).toLocaleDateString("id-ID", {
+                                                                                                    weekday: 'long', year:
+                                                                                                        'numeric', month:
+                                                                                                        'long', day: 'numeric'
+                                                                                                })
+                                                                                            ) : 
+                                                                                            cell.column.Header === 'Perpanjangan Peminjaman' ? (
+                                                                                                String(cell.value))
+                                                                                            : (
+                                                                                                cell.render('Cell')
+                                                                                            )} */}
+                                                                                            {cell.render('Cell')}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                                {(cell.column.Header === 'Options') ? (
+                                                                                    <div className='flex items-center gap-2'>
+                                                                                        <Tooltip label='Renew Book' fontSize='md'>
+                                                                                            <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 font-bold rounded"
+                                                                                                type='RENEW'
+                                                                                                onClick={() => {
+                                                                                                    handleModalRenew(cell.row.values)
+                                                                                                }}
+                                                                                            >
+                                                                                                <MdOutlineAutorenew />
+                                                                                            </button>
+                                                                                        </Tooltip>
+                                                                                    </div>
+                                                                                    ) : (
+                                                                                        <div></div>
+                                                                                )}
+                                                                            </td>
+                                                                        )
+                                                                    })}
+                                                                </tr>
+                                                            )
+                                                        })}
+                                                    </tbody>
+                                                </table>
+                                        ) : (
+                                            <div className='flex justify-center items-center h-64'>
+                                                <div className='flex flex-col justify-center items-center'>
+                                                    {/* <img src={Empty} alt='empty' className='w-64 h-64' /> */}
+                                                    <MdOutlineInfo className='w-10 h-10 text-gray-500' />
+                                                    <p className='text-2xl font-bold text-gray-500'>Tidak ada pinjaman</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    )}                            
-                                    {/* </> */}
-                                {/* )} */}
+                                        )
+                                    }
+                                </Box>    
+                        
                                 <div
                                     className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between          ">
                                     <span className="text-xs xs:text-sm text-gray-900">

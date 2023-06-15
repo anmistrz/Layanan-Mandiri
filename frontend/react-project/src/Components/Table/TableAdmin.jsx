@@ -1,8 +1,8 @@
-import { Badge, Box, Button, Text, VisuallyHidden, useDisclosure, useToast } from '@chakra-ui/react';
+import { Badge, Box, Button, Text, Input, useDisclosure, useToast } from '@chakra-ui/react';
 import { useState, useMemo, useEffect } from 'react'
 import { useTable, useSortBy, useFilters, useGlobalFilter, usePagination, useRowSelect } from 'react-table'
 import {
-    MdOutlineModeEditOutline,
+    MdOutlineQrCodeScanner,
     MdOutlineDeleteOutline,
     MdOutlineLibraryAdd,
     MdOutlineInfo,
@@ -11,15 +11,14 @@ import {
 import { Tooltip } from '@chakra-ui/react';
 import API from '../../services';
 import { useDispatch, useSelector } from 'react-redux'
+import ModalDropbox from '../Modal/ModalDropbox';
 
-const TableChekin = () => {
+const TableAdmin = () => {
 
     const [dataChekin, setDataChekin] = useState([])
-    const [selectedSuggest, setSelectedSuggest] = useState({})
-    const [type, setType] = useState('')
+    const [tanggal, setTanggal] = useState('')
     const { isOpen, onOpen, onClose } = useDisclosure()
-    const states = useSelector(state => state.login)
-    const stateSuggest = useSelector(state => state.suggest)
+    const stateLogin = useSelector(state => state.login)
     const dispatch = useDispatch()
     const toast = useToast({
         position: 'top-right',
@@ -28,10 +27,27 @@ const TableChekin = () => {
         duration: 2000
     })
 
+    const handleChangeTanggal = (data) => {
+        try {
+            setGlobalFilter(new Date(data).toLocaleDateString('id-ID', {year: 'numeric', month: 'long', day: 'numeric'}))
+
+        } catch (error) {
+            console.log("error", error)
+        }
+    }
+
+    const handleModalCekDropBox = (data) => {
+        try {
+            onOpen()
+        } catch (error) {
+            console.log("error", error)
+        }
+    }
+
 
     const getDataMyChekin = async () => {
         try {
-            const res = await API.getListMyCheckin()
+            const res = await API.listCheckinPending()
             console.log("res", res.data)
             setDataChekin(res.data)
         } catch (error) {
@@ -42,7 +58,11 @@ const TableChekin = () => {
 
     useEffect(() => {
         getDataMyChekin()
-    }, [states.triggerLogin])
+    }, [stateLogin.loading])
+
+    useEffect(() => {
+        console.log("tanggal kembali", tanggal)
+    },[tanggal])
 
 
 
@@ -56,25 +76,50 @@ const TableChekin = () => {
         () => [
 
             {
+                Header: 'Tanggal Kembali',
+                accessor: 'returndate',
+            },
+            {
                 Header: 'Nama Peminjam',
                 accessor: 'surname',
+            },
+            {
+                Header: 'Barcode',
+                accessor: 'barcode',
             },
             {
                 Header: 'Nama Buku',
                 accessor: 'title',
             },
             {
-                Header: 'Jumlah Perpanjangan peminjaman',
+                Header: 'Renewal',
                 accessor: 'renewals',
             },
             {
-                Header: 'Tanggal Pengembalian',
-                accessor: 'returndate',
+                Header: 'Status',
+                accessor: 'status',
+                Cell: ({ row }) => (
+                    <div>
+                        {row.original.status === 'CHECKIN PENDING' ? (
+                            <span className="text-yellow-500">
+                                <Badge colorScheme="yellow">{row.original.status}</Badge>
+                            </span>
+                        ) : row.original.status === 'ACCEPTED' ? (
+                            <span className="text-green-500">
+                                <Badge colorScheme="green">{row.original.status}</Badge>
+                            </span>
+                        ) : row.original.status === 'REJECTED' ? (
+                            <span className="text-red-500">
+                                <Badge colorScheme="red">{row.original.status}</Badge>
+                            </span>
+                        ) : (
+                            <span className="text-blue-500">
+                                <Badge colorScheme="blue">{row.original.status}</Badge>
+                            </span>
+                        )}
+                    </div>
+                ),
             },
-            // {
-            //     Header: 'Options',
-            //     accessor: ''
-            // },
         ],
         []
     )
@@ -111,14 +156,14 @@ const TableChekin = () => {
                 <div className="container mx-auto px-4 sm:px-8">
                     <div className="py-2">
                         <div>
-                            <h2 className="text-lg font-semibold leading-tight pt-2">List Pengembalian Buku</h2>
+                            <h2 className="text-lg font-semibold leading-tight pt-2">List Pengecekan Buku Kembali</h2>
                         </div>
 
-                        <div className="my-4 flex sm:flex-row flex-col">
-                            <div className="flex flex-row mb-1 sm:mb-0">
-                                <div className="relative">
+                        <div className="my-1 flex sm:flex-row flex-col  w-full">
+                            <div className="flex flex-row mt-4 sm:mb-0">
+                                <div className="relative w-1/4 h-3/4 mt-2">
                                     <select
-                                        className="appearance-none h-full rounded-l border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-4 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                        className="appearance-none h-3/4 rounded-l border block appearance-none w-full bg-white border-gray-400 text-gray-700 py-2 px-2 pr-8 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                         value={pageSize}
                                         onChange={(e) => setPageSize(Number(e.target.value))}
                                     >
@@ -127,34 +172,54 @@ const TableChekin = () => {
                                         <option value={20}>20</option>
                                     </select>
                                     <div
-                                        className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                        className="pointer-events-none h-3/4 absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                                         <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                             <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                                         </svg>
                                     </div>
                                 </div>
+
+                                <div className="block relative h-3/4 mt-2">
+                                    <span className="h-3/4 absolute inset-y-0 left-0 flex items-center pl-2">
+                                        <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current text-gray-500">
+                                            <path
+                                                d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z">
+                                            </path>
+                                        </svg>
+                                    </span>
+                                    <input placeholder="Search"
+                                        className="appearance-none h-3/4 rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
+                                        onChange={(e) => setGlobalFilter(e.target.value)}
+                                        value={globalFilter}
+                                    />
+                                </div>
                             </div>
-                            <div className="block relative">
-                                <span className="h-full absolute inset-y-0 left-0 flex items-center pl-2">
-                                    <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current text-gray-500">
-                                        <path
-                                            d="M10 4a6 6 0 100 12 6 6 0 000-12zm-8 6a8 8 0 1114.32 4.906l5.387 5.387a1 1 0 01-1.414 1.414l-5.387-5.387A8 8 0 012 10z">
-                                        </path>
-                                    </svg>
-                                </span>
-                                <input placeholder="Search"
+
+                            <div className="relative ml-10 w-1/3 h-full float-right">
+                                <Button my={6} w='70%' ml={16} colorScheme="blue" onClick={() => handleModalCekDropBox()}>
+                                        Cek Buku DropBox
+                                </Button>
+                            </div>
+                            
+                            <div className="relative mb-4 mx-2 w-1/3 h-1/4 float-right">
+                                <label className="text-gray-700 text-xs">
+                                    Tanggal Pengembalian
+                                </label>
+                                <input
                                     className="appearance-none rounded-r rounded-l sm:rounded-l-none border border-gray-400 border-b block pl-8 pr-6 py-2 w-full bg-white text-sm placeholder-gray-400 text-gray-700 focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none"
-                                    onChange={(e) => setGlobalFilter(e.target.value)}
-                                    value={globalFilter}
+                                    placeholder="Select Date and Time"
+                                    size="md"
+                                    type="date"
+                                    onChange={(e) => handleChangeTanggal(e.target.value)}
                                 />
                             </div>
                         </div>
-                        <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                        <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-1 overflow-x-auto">
                             <div className=" shadow rounded-lg overflow-hidden">
 
                                 {(rows.length > 0) ? (
-                                    <Box overflowY="auto" overflowX="hidden" maxHeight='280px' >
-                                        <table {...getTableProps()} className="min-w-full leading-normal">
+                                    <Box overflowY="auto" overflowX="hidden" maxHeight='320px' >
+                                        <table {...getTableProps()} className="w-full leading-normal">
                                             <thead position="sticky" className="sticky top-0">
                                                 {headerGroups.map(headerGroup => (
                                                     <tr {...headerGroup.getHeaderGroupProps()}>
@@ -184,45 +249,12 @@ const TableChekin = () => {
                                                                         <div className="">
                                                                             <div className="ml-3">
                                                                                 <p className=" text-gray-900 whitespace-no-wrap">
-                                                                                    {cell.column.Header === 'Tanggal Pengembalian' ? (
-                                                                                        new Date(cell.value).toLocaleDateString("id-ID", {
-                                                                                            weekday: 'long', year:
-                                                                                                'numeric', month:
-                                                                                                'long', day: 'numeric'
-                                                                                        })
-                                                                                    ) : (
-                                                                                        cell.render('Cell')
-                                                                                    )}
+                                                                                    
+                                                                                    { cell.render('Cell')}
+
                                                                                 </p>
                                                                             </div>
                                                                         </div>
-                                                                        {(cell.column.Header === 'Options') ? (
-                                                                            <div className='flex items-center gap-2'>
-                                                                                <Tooltip label='Edit Suggest Buku' fontSize='md'>
-                                                                                    <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 font-bold rounded"
-                                                                                        type='EDIT_SUGGEST'
-                                                                                        onClick={() => {
-                                                                                            handleModalSuggest(cell.row.values)
-                                                                                        }}
-                                                                                    >
-                                                                                        <MdOutlineModeEditOutline />
-                                                                                    </button>
-                                                                                </Tooltip>
-                                                                                <Tooltip label='Delete Suggest Buku' fontSize='md'>
-                                                                                    <button className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 font-bold  rounded"
-                                                                                        type='RETURN'
-                                                                                        onClick={() => {
-                                                                                            console.log("seelectedSuggest", cell.row.values)
-                                                                                            handleDeleteSuggest(cell.row.values.suggestionid)
-                                                                                        }}
-                                                                                    >
-                                                                                        <MdOutlineDeleteOutline />
-                                                                                    </button>
-                                                                                </Tooltip>
-                                                                            </div>
-                                                                        ) : (
-                                                                            <div></div>
-                                                                        )}
                                                                     </td>
                                                                 )
                                                             })}
@@ -273,7 +305,7 @@ const TableChekin = () => {
                         </div>
                     </div>
                 </div>
-
+            <ModalDropbox isOpen={isOpen} onClose={onClose} />
             </div>
         </>
     )
@@ -281,4 +313,4 @@ const TableChekin = () => {
 }
 
 
-export default  TableChekin;
+export default  TableAdmin;

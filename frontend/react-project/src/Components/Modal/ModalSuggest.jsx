@@ -29,10 +29,11 @@ import {
 } from '@chakra-ui/react'
 
 import { useDispatch, useSelector } from "react-redux";
-import { addSuggest, updateSuggest, setTriggerSuggest } from "../../features/suggestSlices";
+import { addSuggest, updateSuggest, setTriggerSuggest, setTriggerDetailSuggest } from "../../features/suggestSlices";
 import { MdOutlineWarningAmber } from 'react-icons/md';
 import { useFormik } from "formik";
 import { SUGGEST_VALIDATION } from "../../validation/validation";
+import { tr } from "date-fns/locale";
 
 
 const ModalSuggest = (props) => {
@@ -110,6 +111,21 @@ const ModalSuggest = (props) => {
             }
         }
     })
+    
+    useEffect (() => {
+        setTimeout(() => {
+            setTriggerDetailSuggest(false)
+        }, 1000)
+    }, [stateSuggest.triggerDetailSuggest])
+
+    // const handleCloseModalSuggest = () => {
+    //     try {
+    //         dispatch(setRefreshSuggest())
+    //         props.onClose()
+    //     } catch (error) {
+    //         console.log("error", error)
+    //     }
+    // }
 
 
 
@@ -203,7 +219,7 @@ const ModalSuggest = (props) => {
                         <ModalCloseButton />
                         <form onSubmit={formik.handleSubmit}>
                             <ModalBody>
-                                { stateSuggest.loading ? (
+                                {/* { stateSuggest.loading ? (
                                     <Center>
                                         <Spinner 
                                             thickness="4px"
@@ -214,7 +230,7 @@ const ModalSuggest = (props) => {
                                         />
                                     </Center>
                                 ) : (
-                                    <>
+                                    <> */}
                                         <FormControl id="title" mt={4} isRequired>
                                             <FormLabel>Title</FormLabel>
                                             <Input type="text" onChange={formik.handleChange} defaultValue={formik.values.title} />
@@ -228,11 +244,11 @@ const ModalSuggest = (props) => {
                                         <FormControl id="note" mt={4}>
                                             <Textarea type="text" onChange={formik.handleChange} defaultValue={formik.values.note} />
                                         </FormControl>
-                                    </>
-                                )}
+                                    {/* </>
+                                )} */}
                             </ModalBody>
                             <ModalFooter>
-                                <Button colorScheme="red" mr={3} onClick={props.onClose}>
+                                <Button colorScheme="red" mr={3} onClick = {props.onClose}>
                                     Close
                                 </Button>
                                 <Button colorScheme="blue"

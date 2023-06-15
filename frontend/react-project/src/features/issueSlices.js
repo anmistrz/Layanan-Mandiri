@@ -20,6 +20,7 @@ export const getIssues = createAsyncThunk(
     }
 );
 
+
 export const addIssues = createAsyncThunk(
     "addIssues",
     async (args, thunkAPI) => {
@@ -52,7 +53,8 @@ const issueReducer = createSlice({
     name: "issue",
     initialState: {
         // issue: {},
-        listIssue: {},
+        checkIssue: {},
+        listBookCheckIn: [],
         listBarcodeIssue: [],
         triggerIssue: false,
         loading: false,
@@ -72,7 +74,7 @@ const issueReducer = createSlice({
                 state.listBarcodeIssue.length = 0;
             }
             console.log('state listBarcodeIssue update: ', state.listBarcodeIssue);
-        }
+        },
     },
     extraReducers: {
         [getIssues.pending]: (state, action) => {
@@ -85,14 +87,9 @@ const issueReducer = createSlice({
         [getIssues.fulfilled]: (state, action) => {
             state.loading = false;
             // console.log('Payload:', action.payload);
-            state.listIssue = {
-                barcode: action.payload[0].barcode,
-                title: action.payload[0].title,
-            }
             state.listBarcodeIssue =[...state.listBarcodeIssue, action.payload[0]];
             console.log('listBarcodeIssue: ', state.listBarcodeIssue);
         },
-
 
         [addIssues.pending]: (state, action) => {
             state.loading = true;
@@ -124,5 +121,5 @@ const issueReducer = createSlice({
     }
 })
 
-export const { setTriggerIssue, setDeleteIssue, setRefreshListIssue } = issueReducer.actions;
+export const { setTriggerIssue, setDeleteIssue, setRefreshListIssue, setDeleteCheckIssue } = issueReducer.actions;
 export default issueReducer.reducer;

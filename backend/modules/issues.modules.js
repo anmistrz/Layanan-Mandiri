@@ -22,7 +22,7 @@ class _issues {
                 return this.toString()
             }
 
-            const list = await mysql.query("SELECT b.title, i.barcode FROM koha.biblio as b  LEFT JOIN koha.items as i on i.biblionumber = b.biblionumber WHERE i.barcode = ?",
+            const list = await mysql.query("SELECT b.title, i.barcode, b.author FROM koha.biblio as b  LEFT JOIN koha.items as i on i.biblionumber = b.biblionumber WHERE i.barcode = ?",
             [barcode]);
 
             return {
@@ -37,8 +37,6 @@ class _issues {
             }
         }
     }
-
-
 
 
     listMyIssues = async (cardnumber) => {
@@ -216,6 +214,7 @@ class _issues {
 
     updateIssuesItems = async (cardnumber, body) => {
         try {
+
             body = {
                 cardnumber,
                 ...body

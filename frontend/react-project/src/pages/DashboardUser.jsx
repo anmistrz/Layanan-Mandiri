@@ -31,6 +31,8 @@ import { setAutomaticLogout, setTriggerUpdateProfile } from "../features/loginSl
 import API from "../services";
 import ModalProfile from "../Components/Modal/ModalProfile";
 import TableChekin from "../Components/Table/TableCheckin";
+import FineUser from "../Components/FineUser";
+
 
 
 const dashboardUser = () => {
@@ -85,21 +87,21 @@ const dashboardUser = () => {
         getPhotoProfile()
     }, [])
 
-    // useEffect(() => {
+    useEffect(() => {
 
-    //     if (new Date() > new Date(data.dateexpiry)) {
-    //         toast ({
-    //             position: "top-right",
-    //             title: "Session Expired",
-    //             description: "Masa berlaku kartu telah habis",
-    //             status: "error",
-    //             duration: 2000,
-    //             isClosable: true,
-    //         })
-    //         navigate('/index')
-    //     }
+        if (new Date() > new Date(data.dateexpiry)) {
+            toast ({
+                position: "top-right",
+                title: "Session Expired",
+                description: "Masa berlaku kartu telah habis",
+                status: "error",
+                duration: 2000,
+                isClosable: true,
+            })
+            navigate('/index')
+        }
 
-    // }, [data])
+    }, [data])
 
     useEffect ( () => {
         console.log("image", urlImage)
@@ -109,7 +111,6 @@ const dashboardUser = () => {
 
     useEffect(() => {
         getDataUser()
-        console.log("ini jalan nggak ???")
         setTimeout(() => {
             dispatch(setTriggerUpdateProfile(false))
         }, 1000);
@@ -117,10 +118,10 @@ const dashboardUser = () => {
 
     return (
         <>
-            <div className="container mx-auto h-full">
+            <div className="container mx-auto h-screen">
                 <Navbar />
-                <HStack spacing={4} w='100%' align="center"  my="5">
-                    <Box w='20%' h="580px" p='5px' >
+                <HStack spacing={4} w='100%' align="center">
+                    <Box w='20%' h='full' p='5px' >
                         <Card alignItems='center' w='100%' bgColor='transparent' boxShadow='transparent' h='100%'>
                             <Heading fontSize='2xl' my={3} textAlign='center'>{data.surname}</Heading>
 
@@ -183,22 +184,21 @@ const dashboardUser = () => {
                                 <TabList display='flex' gap={3}>
                                     <Tab>Peminjaman Buku</Tab>
                                     <Tab>Pengembalian Buku</Tab>
-                                    <Tab>Ulasan Buku</Tab>
-                                    <Tab>Denda Buku</Tab>
+                                    <Tab>Usulan Buku</Tab>
                                     <Tab>Denda Buku</Tab>
                                 </TabList>
                                 <TabPanels>
-                                    <TabPanel overflowY='scroll' position='relative' height='500px' mt={4}>
+                                    <TabPanel position='relative' height='450px'>
                                         <TablePinjaman />
                                     </TabPanel>
-                                    <TabPanel overflowY='scroll' position='relative' height='500px' mt={4}>
+                                    <TabPanel position='relative' height='450px' >
                                         <TableChekin />
                                     </TabPanel>
-                                    <TabPanel overflowY='scroll' position='relative' height='500px' mt={4}>
+                                    <TabPanel position='relative' height='450px'>
                                         <TableSuggest />
                                     </TabPanel>
-                                    <TabPanel>
-                                    <p>four!</p>
+                                    <TabPanel width='1040px' height='450px'>
+                                        <FineUser />
                                     </TabPanel>
                                 </TabPanels>
                             </Tabs>

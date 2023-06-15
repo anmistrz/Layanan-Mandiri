@@ -132,11 +132,11 @@ class _auth {
             }
 
             // const image = await this.blobToImage(checkUser[0].imagefile.data)
-            const imgBase64 = checkUser[0].imagefile.toString("base64");
+         
+            const imgBase64 = checkUser[0].imagefile?.toString("base64");
             // const image = `data:image/png;base64,${imgBase64}`;
             // checkUser[0].imagefile = image
 
-            console.log("image blob to Image: ", checkUser[0].imagefile)
 
             return {
                 status: true,
@@ -315,13 +315,11 @@ class _auth {
             }
 
             const payload = {
-                cardnumber: checkUser[0].cardnumber,
                 userid: checkUser[0].userid,
                 password: checkUser[0].password,
-                categorycode: checkUser[0].categorycode,
             }
 
-            const { secret, expiresIn } = config.jwtIndex
+            const { secret, expiresIn } = config.jwt
 
             const token = jwt.sign(payload, secret, { expiresIn: String(expiresIn) })
             const expiresAt = date.format(new Date(Date.now() + expiresIn), 'YYYY-MM-DD HH:mm:ss')
@@ -347,7 +345,6 @@ class _auth {
     
     adminLogin = async (body) => {
         try {
-           
             const schema = Joi.object({
                 userid: Joi.string().required(),
                 password: Joi.string().required()
@@ -388,14 +385,11 @@ class _auth {
             }
 
             const payload = {
-                cardnumber: checkUser[0].cardnumber,
                 userid: checkUser[0].userid,
                 password: checkUser[0].password,
-                categorycode: checkUser[0].categorycode,
-
             }
 
-            const { secret, expiresIn } = config.jwt
+            const { secret, expiresIn } = config.jwtIndex
 
             const token = jwt.sign(payload, secret, { expiresIn: String(expiresIn) })
             const expiresAt = date.format(new Date(Date.now() + expiresIn), 'YYYY-MM-DD HH:mm:ss')

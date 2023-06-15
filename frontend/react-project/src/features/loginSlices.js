@@ -8,13 +8,8 @@ import parseJwt from "../utils/parseJwt";
 export const loginIndex = createAsyncThunk(
     "loginIndex",
     async (args, thunkAPI) => {
-        const value = {
-            userid: args.payload.userid,
-            password: args.payload.password,
-        }
         try {
-            const res = await API.login(value);
-            
+            const res = await API.login(args);        
             args = {
                 ...args,
                 token: res.data.token,
@@ -25,6 +20,24 @@ export const loginIndex = createAsyncThunk(
         }
     }
 );
+
+export const adminLogin = createAsyncThunk(
+    "adminLogin",
+    async (args, thunkAPI) => {
+
+        try {
+            const res = await API.loginAdmin(args);
+            console.log('res data admin: ', res);
+            args = {
+                ...args,
+                token: res.data.token,
+            }
+            return res.data;
+        }catch (err) {
+            return thunkAPI.rejectWithValue(err);
+        }
+    }
+)
 
 export const loginUser = createAsyncThunk(
     "loginUser",
@@ -87,6 +100,7 @@ export const loginReducer = createSlice({
     name: "login",
     initialState: {
         users: [],
+        admin:[],
         automaticLogout: null,
         isAutomaticLogout: false,
         token: null,
@@ -124,17 +138,10 @@ export const loginReducer = createSlice({
             state.error = action.payload;
         }),
         builder.addCase(loginIndex.fulfilled, (state, action) => {
-                console.log("login fulfilled: ", action)
-                switch (action.meta.arg.type) {
-                    case "LOGIN":
-                        state.users = action.meta.arg.payload;
-                        state.loading = false;
-                        state.error = null;
-                        localStorage.setItem("token", action.payload.token);
-                        break;
-                    default:
-                        break;
-                }
+            state.users = action.meta.arg.payload;
+            state.loading = false;
+            state.error = null;
+            localStorage.setItem("token", action.payload.token);
         }),
 
 
@@ -152,6 +159,23 @@ export const loginReducer = createSlice({
                 state.error = null;
                 Cookies.setCookies ("CERT", action.payload.token, {datetime: parseISO(action.payload.expiredAt)});
                 // state.triggerLogin = !state.triggerLogin;
+        }),
+
+
+        builder.addCase(adminLogin.pending, (state, action) => {
+            state.loading = true;
+        }),
+        builder.addCase(adminLogin.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        }),
+        builder.addCase(adminLogin.fulfilled, (state, action) => {
+            state.admin = parseJwt(action.payload.token);
+            console.log('state.admin fullfiled: ', state.admin);
+            state.loading = false;
+            state.error = null;
+            Cookies.setCookies ("CERT", action.payload.token, {datetime: parseISO(action.payload.expiredAt)});
+            // state.triggerLogin = !state.triggerLogin;
         }),
 
         

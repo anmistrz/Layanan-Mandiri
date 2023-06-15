@@ -30,6 +30,9 @@ import API from "../../services/index"
 import { addStatisticRenew, setDataFromModal, setRefreshRenew, setTriggerRenew, updateRenew } from "../../features/renewSlices";
 import { addIssues, getIssues, setDeleteIssue, setRefreshListIssue, setTriggerIssue, updateIssues } from "../../features/issueSlices";
 import { useDispatch, useSelector } from "react-redux";
+import ReactToPrint from 'react-to-print';
+import { TemplateReceipt } from "../Print/TemplateReceipt";
+import ModalPrint from "./ModalPrint";
 
 const ModalPinjaman = (props) => {
 
@@ -54,6 +57,12 @@ const ModalPinjaman = (props) => {
         duration: 2000,
         variant: 'left-accent',
     })
+
+
+
+    const componentRef = useRef();
+    const {isOpen, onOpen, onClose} = useDisclosure()
+
 
 
 //-------------------------------CHECKOUT-------------------------------------------------
@@ -100,7 +109,7 @@ const ModalPinjaman = (props) => {
         return dispatch(setDeleteIssue(filter))
     }
 
-    const handleSubmitCheckout = () => {
+    const handleSubmitCheckout = async() => {
         try{
             const value = {
                 data: stateIssue.listBarcodeIssue.map((item) => {
@@ -109,21 +118,45 @@ const ModalPinjaman = (props) => {
                     }
                 }),
             }
-            dispatch(addIssues(value))
-            setTimeout(() => {
-                dispatch(updateIssues(value))
-            }, 1000)
-            dispatch(setTriggerIssue(true))
-            toast({
-                title: "Checkout Success",
-                status: "success",
-                isClosable: true,
-            })
-            setInputBarcodeCheckout("")
-            setTimeout(() => {
-                dispatch(setTriggerIssue(false))
-                props.onClose()
-            }, 1000)
+
+            const res = await dispatch(addIssues(value))
+            const resUpdate =  await dispatch(updateIssues(value))
+            console.log("res issues", res)
+            if(res.type === "addIssues/fulfilled" && resUpdate.type === "updateIssues/fulfilled") {
+                dispatch(setTriggerIssue(true))
+                toast({
+                    title: "Checkout Success",
+                    status: "success",
+                    isClosable: true,
+                })
+                setInputBarcodeCheckout("")
+                setTimeout(() => {
+                    dispatch(setTriggerIssue(false))
+                    props.onClose()
+                }, 1000)
+            } else {
+                toast({
+                    title: "Checkout Failed",
+                    status: "error",
+                    duration: 2000,
+                    isClosable: true,
+                })
+            }
+            // dispatch(addIssues(value))
+            // setTimeout(() => {
+            //     dispatch(updateIssues(value))
+            // }, 1000)
+            // dispatch(setTriggerIssue(true))
+            // toast({
+            //     title: "Checkout Success",
+            //     status: "success",
+            //     isClosable: true,
+            // })
+            // setInputBarcodeCheckout("")
+            // setTimeout(() => {
+            //     dispatch(setTriggerIssue(false))
+            //     props.onClose()
+            // }, 1000)
 
 
     
@@ -201,7 +234,7 @@ const ModalPinjaman = (props) => {
     return (
         <>       
             {props.type === "CHECKOUT" ? (
-                <Modal isCentered isOpen={props.isOpen} onClose={props.onClose} size="3xl">
+                <Modal isCentered isOpen={props.isOpen} onClose={props.onClose} size="3xl" scrollBehavior='inside'>
                     <ModalOverlay />
                     <ModalContent>
                         <ModalHeader> Tambah Checkout Buku</ModalHeader>
@@ -267,6 +300,22 @@ const ModalPinjaman = (props) => {
                             </Box>
                         </ModalBody>
                         <ModalFooter>
+                            {/* <div>
+                                <ReactToPrint
+                                    trigger={() => <button>Print this out!</button>}
+                                    content={() => componentRef.current}
+                                    pageStyle={ "@page { size: 80mm 80mm; margin: 0mm auto ; } @media print { body { -webkit-print-color-adjust: exact; } }" }
+                                />
+                                <div style={{ display: 'none' }}>
+                                    <TemplateReceipt ref={componentRef} data={stateIssue.listBarcodeIssue} />
+                                </div>
+                            </div>
+                            <Button colorScheme="teal" mr={3} onClick={() => {
+                                onOpen()
+                            }}>
+                                Test
+                            </Button> */}
+
                             <Button colorScheme="red" mr={3} onClick={() => {
                                     stateIssue.listBarcodeIssue.length > 0 ? (
                                         dispatch(setRefreshListIssue(true)),
@@ -283,10 +332,11 @@ const ModalPinjaman = (props) => {
                             </Button>
                         </ModalFooter>
                     </ModalContent>
+                    <ModalPrint isOpen={isOpen} onClose={onClose} size="xl" />
                 </Modal>
             ) :
             props.type === "RENEW" && (
-                <Modal isOpen={props.isOpen} onClose={props.onClose} size="xl">
+                <Modal isOpen={props.isOpen} onClose={props.onClose} size="xl" scrollBehavior='inside'>
                     <ModalOverlay />
                     <ModalContent>
                         <ModalHeader>Detail Renew Buku</ModalHeader>

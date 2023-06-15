@@ -5,8 +5,16 @@ const {userSession, verifyAdmin, adminSession} = require('../helpers/middleware'
 
 const CheckinController = Router()
 
-CheckinController.post('/user/add', userSession, async (req, res, next) => {
-    response.sendResponse(res, await m$checkin.checkinPending(req.user.cardnumber, req.body))
+CheckinController.post('/user/add', async (req, res, next) => {
+    response.sendResponse(res, await m$checkin.addChekin(req.body))
+})
+
+CheckinController.put('/user/update', async (req, res, next) => {
+    response.sendResponse(res, await m$checkin.updateItemsChekin(req.body))
+})
+
+CheckinController.delete('/user/delete', async (req, res, next) => {
+    response.sendResponse(res, await m$checkin.deleteIssues(req.body))
 })
 
 CheckinController.get('/user/list', userSession, async (req, res, next) => {
@@ -15,6 +23,14 @@ CheckinController.get('/user/list', userSession, async (req, res, next) => {
 
 CheckinController.get('/admin/list', adminSession, verifyAdmin, async (req, res, next) => {
     response.sendResponse(res, await m$checkin.listPending(req.user.userid))
+})
+
+CheckinController.get('/admin/list/:barcode', adminSession, verifyAdmin, async (req, res, next) => {
+    response.sendResponse(res, await m$checkin.checkDropbox(req.user.userid, req.params.barcode))
+})
+
+CheckinController.get('/mylist/:barcode',  async (req, res, next) => {
+    response.sendResponse(res, await m$checkin.checkMyIssues(req.params.barcode))
 })
 
 

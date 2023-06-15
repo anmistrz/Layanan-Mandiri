@@ -72,47 +72,48 @@ const renewReducer = createSlice({
         },
 
     },
-    extraReducers: {
-        [renewBook.pending]: (state, action) => {
+    extraReducers: (builder) => {
+
+        builder.addCase(renewBook.pending, (state, action) => {
             state.loading = true;
-        },
-        [renewBook.rejected]: (state, action) => {
+        }),
+        builder.addCase(renewBook.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
-        },
-        [renewBook.fulfilled]: (state, action) => {
+        }),
+        builder.addCase(renewBook.fulfilled, (state, action) => {
             state.loading = false;
             state.renew = action.payload;
             console.log('state renew fulffiled: ', state.renew[0].itemnumber);
-        },
+        }),
 
 
-        [updateRenew.pending]: (state, action) => {
+        builder.addCase(updateRenew.pending, (state, action) => {
             state.loading = true;
-        },
-        [updateRenew.rejected]: (state, action) => {
+        }),
+        builder.addCase(updateRenew.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
-        },
-        [updateRenew.fulfilled]: (state, action) => {
+        }),
+        builder.addCase(updateRenew.fulfilled, (state, action) => {
             state.loading = false;
             // state.renew = action.payload;
             console.log('state update renew fulffiled: ');
-        },
+        }),
 
 
-        [addStatisticRenew.pending]: (state, action) => {
+        builder.addCase(addStatisticRenew.pending, (state, action) => {
             state.loading = true;
-        },
-        [addStatisticRenew.rejected]: (state, action) => {
+        }),
+        builder.addCase(addStatisticRenew.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
-        },
-        [addStatisticRenew.fulfilled]: (state, action) => {
+        }),
+        builder.addCase(addStatisticRenew.fulfilled, (state, action) => {
             state.loading = false;
             // state.renew = action.payload;
             console.log('state add statistic renew fulffiled: ');
-        },
+        })
     }
 })
 

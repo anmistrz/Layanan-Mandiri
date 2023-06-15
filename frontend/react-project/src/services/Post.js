@@ -3,8 +3,14 @@ import { baseApi as baseURL } from '../services/Config';
 import baseAPI from '../utils/axiosConfig';
 
 const Post = async (path, data) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    }
     try {
-        const res = await baseAPI.baseAPI.post(`${baseURL}${path}`, data);
+        console.log('data postt: ', data)
+        const res = await baseAPI.baseAPI.post(`${baseURL}${path}`, data, config);
         return res;
 
     } catch (err) {

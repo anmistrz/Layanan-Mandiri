@@ -29,8 +29,10 @@ class _database {
             // }
 
             return res
-        } finally {
-            if (conn) conn.release()
+        } catch (err) {
+            throw err
+        }finally {
+            if (conn)  conn.release()
         }
     }
 }

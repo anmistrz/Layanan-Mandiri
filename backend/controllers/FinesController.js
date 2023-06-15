@@ -11,9 +11,13 @@ const FinesController = Router();
 */
 
 
-FinesController.get('/',userSession, async (req, res, next) => {
-    const fines = await m$fines.listFines(req.user.cardnumber)
+FinesController.get('/user/total',userSession, async (req, res, next) => {
+    const fines = await m$fines.totalMyFines(req.user.cardnumber)
     response.sendResponse(res, fines)
+})
+
+FinesController.get('/user/list', userSession, async (req, res, next) => {
+    response.sendResponse(res, await m$fines.listMyFines(req.user.cardnumber))
 })
 
 

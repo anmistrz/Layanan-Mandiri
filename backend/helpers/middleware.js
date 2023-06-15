@@ -1,7 +1,7 @@
 const mysql = require('../helpers/database')
 const config = require('../config/app.config.json')
 const jwt = require('jsonwebtoken')
-const { verify } = require('crypto')
+
 
 const userSession = async (req, res, next) => {
     let token
@@ -52,9 +52,9 @@ const adminSession = async (req, res, next) => {
             token = req.headers.authorization.split(' ')[1]
     
             const decoded = jwt.verify(token, config.jwt.secret)
-            console.log('decoded', decoded)
-            const user = await mysql.query('SELECT p.cardnumber, p.surname, p.dateexpiry, p.borrowernumber, p.categorycode, p.branchcode, p.userid  FROM koha.borrowers p WHERE  p.cardnumber= ?', [decoded.userid])
-            console.log('user',user)
+            const user = await mysql.query('SELECT p.cardnumber, p.surname, p.dateexpiry, p.borrowernumber, p.categorycode, p.branchcode, p.userid  FROM koha.borrowers p WHERE  p.cardnumber= ?', 
+            [decoded.userid])
+            
             if (user) {
                 req.user = {
                     cardnumber: user[0].cardnumber,
@@ -90,7 +90,6 @@ const adminSession = async (req, res, next) => {
 
 const verifyAdmin = async (req, res, next) => {
         try {
-            console.log('adminnnn', req.user)
             if(req.user.categorycode == 'LIBRARIAN' && req.user.branchcode == 'PUSAT') {
                 next()
             }else {

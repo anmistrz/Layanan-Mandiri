@@ -64,74 +64,79 @@ const suggestReducer = createSlice({
     initialState: {
         suggest: {},
         triggerSuggest: false,
+        triggerDetailSuggest: false,
         loading: false,
         error: null,
     },
     reducers: {
         setTriggerSuggest: (state, action) => {
             state.triggerSuggest = action.payload;
-            console.log('state trigger suggest: ', state.triggerSuggest);
-        }
-    },
-    extraReducers: {
-        [addSuggest.pending]: (state, action) => {
-            state.loading = true;
         },
-        [addSuggest.rejected]: (state, action) => {
+        setTriggerDetailSuggest: (state, action) => {
+            state.triggerDetailSuggest = action.payload;
+        },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(addSuggest.pending, (state, action) => {
+            state.loading = true;
+        }),
+        builder.addCase(addSuggest.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
-        },
-        [addSuggest.fulfilled]: (state, action) => {
+        }),
+
+        builder.addCase(addSuggest.fulfilled, (state, action) => {
             state.loading = false;
             // state.suggest = action.payload;
             state.triggerSuggest = true;
             console.log('state suggest fullfilled: ', state.suggest);
-        },
+        }),
 
 
-        [updateSuggest.pending]: (state, action) => {
+        builder.addCase(updateSuggest.pending, (state, action) => {
             state.loading = true;
-        },
-        [updateSuggest.rejected]: (state, action) => {
+        }),
+        builder.addCase(updateSuggest.rejected, (state,action) => {
             state.loading = false;
             state.error = action.payload;
-        },
-        [updateSuggest.fulfilled]: (state, action) => {
+        }),
+        builder.addCase(updateSuggest.fulfilled, (state, action) => {
             state.loading = false;
             // state.suggest = action.payload;
             state.triggerSuggest = true;
-        },
+        }),
 
 
-        [deleteSuggest.pending]: (state, action) => {
+        builder.addCase(deleteSuggest.pending, (state, action) => {
             state.loading = true;
-        },
-        [deleteSuggest.rejected]: (state, action) => {
+        }),
+        builder.addCase(deleteSuggest.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
-        },
-        [deleteSuggest.fulfilled]: (state, action) => {
+        }),
+        builder.addCase(deleteSuggest.fulfilled, (state, action) => {
             state.loading = false;
             // state.suggest = action.payload;
             state.triggerSuggest = true;
-        },
+        }),
 
 
-        [DetailSuggest.pending]: (state, action) => {
+        builder.addCase(DetailSuggest.pending, (state, action) => {
             state.loading = true;
-        },
-        [DetailSuggest.rejected]: (state, action) => {
+        }),
+        builder.addCase(DetailSuggest.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
-        },
-        [DetailSuggest.fulfilled]: (state, action) => {
+        }),
+        builder.addCase(DetailSuggest.fulfilled, (state, action) => {
             state.loading = false;
             state.suggest = action.payload;
-            state.triggerSuggest = true;
-        },
+            state.triggerDetailSuggest = true;
+        })
+
     }
 
 });
 
-export const { setTriggerSuggest } = suggestReducer.actions;
+export const { setTriggerSuggest, setTriggerDetailSuggest } = suggestReducer.actions;
 export default suggestReducer.reducer;

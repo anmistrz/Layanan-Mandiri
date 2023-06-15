@@ -11,7 +11,10 @@ import {
 
 import Login from './pages/Login'
 import Index from './pages/Index'
+import LoginAdmin from './pages/LoginAdmin'
 import DashboardUser from './pages/DashboardUser'
+import DashboardAdmin from './pages/DashboardAdmin'
+import DropboxBuku from './pages/DropboxBuku'
 import { loginIndex } from './features/loginSlices'
 import { useDispatch, useSelector } from 'react-redux'
 import Cookies from './utils/cookies'
@@ -29,11 +32,26 @@ function App() {
         <Route path="/" element={
           token ? <Navigate to="/index" /> : <Login />
         } />
+
         <Route path="/index" element={token ? 
           <Index /> : <Navigate to="/" />  
         } />
+
         <Route path="/dashboard/user" element={cookies ?
-          <DashboardUser /> : <Navigate to="/index"/>} />
+          <DashboardUser /> : <Navigate to="/index"/>
+        } />
+
+        <Route path="/index/dropbox" element={
+          <DropboxBuku /> 
+        } />
+
+        <Route path="/dashboard/admin" element={
+          <DashboardAdmin /> 
+        } />
+
+        <Route path="/admin" element={
+          <LoginAdmin />
+        } />
       </Routes>
     </BrowserRouter>
   )

@@ -41,15 +41,15 @@ const TableSuggest = () => {
         }
     }
 
-    const handleModalSuggest = (data) => {
+    const handleModalSuggest = async(data) => {
         setType('EDIT_SUGGEST')
-        console.log("data modal suggest", data)
-        dispatch(DetailSuggest(data.suggestionid))
-        dispatch(setTriggerSuggest(true))
-        setSelectedSuggest(data.suggestionid)
-        setTimeout(() => {
+        const res = await dispatch(DetailSuggest(data.suggestionid))
+
+        console.log("res detail suggesttt", res)
+
+        if(res.type === "getDetailSuggest/fulfilled") {
             onOpen()
-        }, 100);
+        }
     }
 
     const handleDeleteSuggest = (id) => {
@@ -73,9 +73,9 @@ const TableSuggest = () => {
         }
     }
 
-    useEffect(() => {
-        getDataMySuggest()
-    }, [states.trigger])
+    // useEffect(() => {
+    //     getDataMySuggest()
+    // }, [states.trigger])
 
 
     useEffect(() => {
@@ -196,11 +196,11 @@ const TableSuggest = () => {
 
     return (
         <>
-            <div className="bg-white shadow-md rounded my-6">
+            <div className="bg-white shadow-md rounded ">
                 <div className="container mx-auto px-4 sm:px-8">
-                    <div className="py-8">
+                    <div className="py-1">
                         <div>
-                            <h2 className="text-lg font-semibold leading-tight">List Usulan Buku</h2>
+                            <h2 className="text-lg font-semibold leading-tight pt-2">List Usulan Buku</h2>
                             <Button colorScheme="blue" size="sm" className="float-right py-5 px-2 gap-2"
                                 value='SUGGEST'
                                 onClick={(e) => {
@@ -250,6 +250,7 @@ const TableSuggest = () => {
                         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                             <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
 
+                            <Box overflowY="auto" overflowX="hidden" maxHeight='280px' >
                                 {(rows.length > 0) ? (
                                     <table {...getTableProps()} className="min-w-full leading-normal">
                                         <thead>
@@ -337,6 +338,9 @@ const TableSuggest = () => {
                                         </div>
                                     </div>
                                 )}
+
+                            </Box>
+
                                 <div
                                     className="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between          ">
                                     <span className="text-xs xs:text-sm text-gray-900">
@@ -370,7 +374,7 @@ const TableSuggest = () => {
                     </div>
                 </div>
 
-                {/* Modal Pinjaman */}
+                {/* Modal Suggest */}
                 <ModalSuggest isOpen={isOpen} onClose={onClose} type={type} data={selectedSuggest} />
 
             </div>

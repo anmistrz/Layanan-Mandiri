@@ -19,7 +19,7 @@ import {
     useToast,
 } from '@chakra-ui/react'
 import Images from '../assets/perpus.png'
-import { MdOutlineArrowForward } from 'react-icons/md'
+import { MdOutlineArrowForward, MdOutlineArrowBack } from 'react-icons/md'
 import { SlSocialDropbox } from 'react-icons/sl'
 import { useNavigate, useLocation } from "react-router-dom";
 import parseJwt from "../utils/parseJwt";
@@ -139,7 +139,7 @@ const Navbar = () => {
                 <Spacer />
                 {location.pathname === '/index' ? (
                     <Center>
-                        <Button mr={4} leftIcon={<SlSocialDropbox />} colorScheme='green' variant='outline'>
+                        <Button onClick={() => navigate('dropbox')} mr={4} leftIcon={<SlSocialDropbox />} colorScheme='green' variant='outline'>
                             Pengembalian Buku
                         </Button>
                         <Button onClick={onOpen} rightIcon={<MdOutlineArrowForward />} colorScheme='red' variant='outline'>
@@ -155,13 +155,29 @@ const Navbar = () => {
                                 Logout
                             </Button>
                         </Center>
-                    ) : (
+                    ) : 
+                    location.pathname === '/index/dropbox' ? (
                         <Center>
-                            <Button rightIcon={<MdOutlineArrowForward />} colorScheme='teal' variant='ghost'>
-                                Admin
+                            <Button leftIcon={<MdOutlineArrowBack />} colorScheme='red' variant='outline' onClick={() => navigate('/index')}>
+                                Kembali ke Dashboard
                             </Button>
                         </Center>
-                )}
+                    ) : 
+                    location.pathname === '/admin' ? (
+                        <Center>
+                            <Button rightIcon={<MdOutlineArrowForward />} colorScheme='red' variant='outline' onClick={() => navigate('/')}>
+                                Kembali ke Homepage
+                            </Button>
+                        </Center>
+                    ) :
+                    location.pathname === '/' && (
+                        <Center>
+                            <Button rightIcon={<MdOutlineArrowForward />} colorScheme='teal' variant='ghost' onClick={() => navigate('/admin')}>
+                                Admin Page
+                            </Button>
+                        </Center>
+                    )
+                }
             </Flex>
         </div>
     )

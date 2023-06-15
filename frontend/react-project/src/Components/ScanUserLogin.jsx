@@ -4,9 +4,11 @@ import { useDispatch } from "react-redux";
 import { loginUser } from "../features/loginSlices";
 import { useNavigate } from "react-router-dom";
 import API from "../services";
+import { setTriggerIssue } from "../features/issueSlices";
 
-const Scan = () => {
+const ScanUserLogin = () => {
     const [idcard, setIdcard] = useState({});
+    const [loading, setLoading] = useState(false)
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const toast = useToast({
@@ -22,19 +24,21 @@ const Scan = () => {
 
     const handleSubmit = async() => {
         try {
-            // const res = await API.loginUser(idcard)
-            // console.log("res user", res.data)
-            // if(res.status) {
-                dispatch(loginUser({type: "LOGIN" ,payload: idcard}))
+            setLoading(true)
+            const res = await dispatch(loginUser({type: "LOGIN" ,payload: idcard}))
+            
+            if(res.type === "loginUser/fulfilled") {
+                // dispatch(setTriggerIssue(true))
                 setTimeout(() => {
+                    setLoading(false)
                     navigate('/dashboard/user')
-               }, 1000)
-                toast({
-                    title: 'Login Success',
-                    status: 'success',
-                    isClosable: true,
-                })
-                
+                }, 1000)
+                    toast({
+                        title: 'Login Success',
+                        status: 'success',
+                        isClosable: true,
+                    })    
+            }
         } catch(error) {
             toast({
                 title: 'Login Failed',
@@ -57,10 +61,10 @@ const Scan = () => {
                 <Text fontSize='md' text='center'>Scan Your ID Card To Login</Text>
 
                 <Input placeholder="ID Card Number" name="cardnumber" w="2xl" h='50px' bgColor='white' onChange={handleInput} />
-                <Button onClick={handleSubmit} colorScheme="blue" w="sm"> Login </Button>
+                <Button onClick={handleSubmit} colorScheme="blue" w="sm" isLoading={loading} loadingText="Loading" >Login</Button>
             </VStack>
         </>
     )
 }
 
-export default Scan
+export default ScanUserLogin

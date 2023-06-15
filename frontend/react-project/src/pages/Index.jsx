@@ -1,6 +1,7 @@
 import React, {useState, useRef} from "react";
 import Navbar from "../Components/Navbar";
-import Scan from "../Components/Scan";
+import ScanUserLogin from "../Components/ScanUserLogin";
+
 import { 
     Box, 
     Text, 
@@ -14,7 +15,7 @@ const index = () => {
         <>
             <div className="container mx-auto h-screen">
                 <Navbar />
-                <Scan />
+                <ScanUserLogin />
                 {/* <Text fontSize='sm' textAlign='center'>{state.users.userid}</Text> */}
                 <Box w='100%'  p='5px' mt="200px" >
                     <Text fontSize='sm' textAlign='center'>© All rights reserved by UMS Library - 2022™</Text>
