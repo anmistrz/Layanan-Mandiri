@@ -28,8 +28,10 @@ import {
     FormErrorMessage
 } from '@chakra-ui/react'
 
-import { useDispatch } from 'react-redux'
-
+import { useDispatch, useSelector } from 'react-redux'
+import ReactToPrint from 'react-to-print'
+import { useRef } from 'react'
+import { TemplateReceipt } from '../Print/TemplateReceipt'
 
 const ModalPrint = (props) => {
     
@@ -40,6 +42,9 @@ const ModalPrint = (props) => {
             variant: 'left-accent',
         })
 
+        const componentRef = useRef();
+        const stateIssue = useSelector(state => state.issue)
+
 
         return (
             <>
@@ -49,12 +54,17 @@ const ModalPrint = (props) => {
                         <ModalHeader>Cetak Bukti Peminjaman</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            <Text>Peminjaman Berhasil</Text>
+                            <iframe style={{width: '100%', height: '300px'}} src={`https://embed.lottiefiles.com/animation/91636`} frameborder="0"></iframe>
                         </ModalBody>
                         <ModalFooter>
-                            <Button colorScheme="blue" mr={3} onClick={props.onClose}>
-                                Close
-                            </Button>
+                                <ReactToPrint
+                                    trigger={() => <Button colorScheme="blue" mr={3} w="100%" onClick={props.onClose}>Cetak Bukti Peminjaman</Button>}
+                                    content={() => componentRef.current}
+                                    pageStyle={ "@page { size: 80mm 80mm; margin: 0mm auto ; } @media print { body { -webkit-print-color-adjust: exact; } }" }
+                                />
+                                <div style={{ display: 'none' }}>
+                                    <TemplateReceipt ref={componentRef} data={stateIssue.listBarcodeIssue} />
+                                </div>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>

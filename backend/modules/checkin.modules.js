@@ -296,6 +296,77 @@ class _checkin {
         }
     }
 
+
+    // list all success checkin can be accessed by admin
+    listSuccess = async (userid) => {
+            try {
+    
+                const schema = Joi.string().required()
+    
+                const validation = schema.validate(userid)
+    
+                if(validation.error){
+                    const errorDetails = validation.error.details.map(detail => detail.message)
+                    return {
+                        status: false,
+                        code: 400,
+                        error: errorDetails.join(', ')
+                    }
+                }
+    
+                const list = await mysql.query("SELECT b.surname, i2.barcode ,b1.title, i.renewals, i.returndate, i.status FROM koha.borrowers b LEFT JOIN koha.issues_pending i ON i.borrowernumber = b.borrowernumber LEFT JOIN koha.items i2 ON i2.itemnumber = i.itemnumber LEFT JOIN koha.biblio b1 ON b1.biblionumber = i2.biblionumber WHERE i.status = 'CHECKIN SUCCESS'")
+    
+                list.map(item => {
+                    item.returndate = new Date(item.returndate).toLocaleDateString('id-ID', {year: 'numeric', month: 'long', day: 'numeric'})
+                })
+    
+                return {
+                    status: true,
+                    data: list
+                }
+    
+            }catch (error){
+                console.error("List Pending module Error: ", error)
+                return {
+                    status: false,
+                    error
+                }
+            }
+    }
+
+    listMyChekin = async (cardnumber) => {
+        try {
+
+            const schema = Joi.string().required()
+
+            const validation = schema.validate(cardnumber)
+
+            if(validation.error){
+                const errorDetails = validation.error.details.map(detail => detail.message)
+                return {
+                    status: false,
+                    code: 400,
+                    error: errorDetails.join(', ')
+                }
+            }
+
+            const list = await mysql.query("SELECT b.surname, b1.title, i.renewals, i.returndate FROM koha.borrowers b LEFT JOIN koha.old_issues i ON i.borrowernumber = b.borrowernumber LEFT JOIN koha.items i2 ON i2.itemnumber = i.itemnumber LEFT JOIN koha.biblio b1 ON b1.biblionumber = i2.biblionumber WHERE  b.cardnumber = ?;",
+            [cardnumber])
+
+            return {
+                status: true,
+                data: list
+            }
+
+        }catch (error){
+            console.error("List Pending module Error: ", error)
+            return {
+                status: false,
+                error
+            }
+        }
+    }
+
     listMyChekin = async (cardnumber) => {
         try {
 
@@ -382,6 +453,79 @@ class _checkin {
 
         }catch (error){
             console.error("List Pending module Error: ", error)
+            return {
+                status: false,
+                error
+            }
+        }
+    }
+
+    updateStatusDropbox = async (userid, body) => {
+        try{
+            const value = {
+                userid,
+                ...body
+            }
+
+            const schema = Joi.object({
+                userid: Joi.string().required(),
+                data: Joi.array().items(Joi.object({
+                    barcode: Joi.string().required()
+                }))
+            })
+
+            const validation = schema.validate(value)
+
+            if(validation.error){
+                const errorDetails = validation.error.details.map(detail => detail.message)
+
+                return {
+                    status: false,
+                    code: 400,
+                    error: errorDetails.join(', ')
+                }
+            }
+
+            const result = []
+
+            for(let i = 0; i < body.data.length; i++) {
+                    
+                    const checkBarcode = await mysql.query("SELECT itemnumber FROM koha.items WHERE barcode = ?",
+                    [body.data[i].barcode])
+    
+                    if(checkBarcode.length === 0) {
+                        return {
+                            status: false,
+                            message: "Barcode Not Found"
+                        }
+                    }
+    
+                    const updateStatus = await mysql.query("UPDATE koha.issues_pending SET status = 'CHECKIN SUCCESS' WHERE itemnumber = ?",
+                    [checkBarcode[0].itemnumber])
+    
+                    if(updateStatus.affectedRows > 0) {
+                        result.push({
+                            status: true,
+                            data: body.data[i].barcode,
+                            message: "Update Status Success"
+                        })
+                    }else {
+                        result.push({
+                            status: false,
+                            message: "Update Status Failed"
+                        })
+                        console.log("update status failed")
+                    }
+    
+            }
+
+            return {
+                status: true,
+                message: "Update Status Success",
+            }
+        
+        }catch (error){
+            console.error("Update Status module Error: ", error)
             return {
                 status: false,
                 error

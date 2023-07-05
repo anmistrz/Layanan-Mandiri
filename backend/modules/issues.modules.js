@@ -128,6 +128,17 @@ class _issues {
                         }
                     }
 
+                    const checkDuplicateIssue = await mysql.query("SELECT itemnumber FROM koha.issues WHERE itemnumber = ?",
+                    [list[0].itemnumber]);
+
+                    if(checkDuplicateIssue.length > 0) {
+                        return {
+                            status: false,
+                            code: 400,
+                            error: 'Duplicate issue'
+                        }
+                    }
+
                     const date_due = new Date();
                     date_due.setDate(date_due.getDate() + list[0].issuelength);
                     date_due.setUTCHours(23, 59, 59, 999);
@@ -159,49 +170,6 @@ class _issues {
                     status: true,
                     data: result
                 }
-
-    
-                // const list = await mysql.query("SELECT b.borrowernumber, b.branchcode,b.categorycode,i.itemnumber,i.itype,i.ccode,i3.issuelength,i3.lengthunit,i.location FROM koha.borrowers as b LEFT JOIN koha.issuingrules as i3 on i3.categorycode = b.categorycode LEFT JOIN koha.items as i on i3.itemtype=i.itype AND i3.branchcode= 'PUSAT' where i.barcode = ? AND b.cardnumber = ?",
-                // [body.barcode, body.cardnumber]);
-
-                // console.log("renew list", list)
-
-                // if(list[0].renewals >= 1) {
-                //     return {
-                //         status: false,
-                //         code: 400,
-                //         error: 'You have reached the maximum number of renewals'
-                //     }
-                // }
-
-                // const date_due = new Date();
-                // date_due.setDate(date_due.getDate() + list[0].issuelength);
-                // date_due.setUTCHours(23, 59, 59, 999);
-                // const newDate = date_due.toISOString().slice(0, 19).replace('T', ' ');
-
-                // const addIssues = await mysql.query("INSERT INTO koha.issues (auto_renew, borrowernumber, branchcode, date_due, issuedate, itemnumber, onsite_checkout) VALUES (0, ?, 'PUSAT',?,now(), ?, 0)",
-                // [list[0].borrowernumber, newDate, list[0].itemnumber]);
-                
-                // const addStatisticIssues = await mysql.query("INSERT INTO koha.statistics (datetime, branch, type, value, other, itemnumber, itemtype, location, borrowernumber, ccode) VALUES (now(), 'PUSAT', 'issue', 0,'', ?, ?, ?, ?, ?)",
-                // [list[0].itemnumber, list[0].itype, list[0].location, list[0].borrowernumber, list[0].ccode]);
-
-                // const action_logs = await mysql.query("INSERT INTO koha.action_logs (timestamp, user, module, action, object, info, interface) VALUES (now(), 149665, 'CIRCULATION', 'ISSUE', ?, ?, 'intranet')",
-                // [list[0].borrowernumber, list[0].itemnumber]); 
-                
-                // if (addIssues.affectedRows === 0 || addStatisticIssues.affectedRows === 0 || action_logs.affectedRows === 0) {
-                //     return {
-                //         status: false,
-                //         code: 400,
-                //         error: 'Add Issues Failed'
-                //     }
-                // }
-    
-                // return {
-                //     status: true,
-                //     addIssues,
-                //     addStatisticIssues,
-                //     action_logs
-                // }
     
         } catch (error){
             console.error("Renew Loan module Error: ", error)

@@ -72,6 +72,19 @@ export const checkDropboxBuku = createAsyncThunk(
     }
 );
 
+export const updateCheckDropbox = createAsyncThunk(
+    "updateCheckDropbox",
+    async (args, thunkAPI) => {
+        console.log("args updateCheckDropbox", args);
+        try {
+            const res = await API.updateCheckDropbox(args)
+            return res.data;
+        }catch (err) {
+            return thunkAPI.rejectedWithValue(err);
+        }
+    }
+);
+
 
 const chekinReducer = createSlice({
 
@@ -99,6 +112,11 @@ const chekinReducer = createSlice({
             state.listBookCheckIn = action.payload;
             state.checkIssue = ""
             console.log('state checkIssue update: ', state.checkIssue);
+        },
+        setDeleteCheckin : (state, action) => {
+            state.listDropboxBookPending = action.payload;
+            state.checkDropboxBuku = ""
+            // console.log('state checkDropboxBuku update: ', state.checkDropboxBuku);
         }
     },
 
@@ -174,10 +192,22 @@ const chekinReducer = createSlice({
             }
         });
 
+        builder.addCase(updateCheckDropbox.pending, (state, action) => {
+            state.loading = true;
+        });
+        builder.addCase(updateCheckDropbox.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        });
+        builder.addCase(updateCheckDropbox.fulfilled, (state, action) => {
+            state.loading = false;
+            console.log('state updateCheckDropbox fullfiled')
+        });
+
     }
 })
 
 
-export const { setChekinFromModal, setTriggerChekin, setDeleteCheckIssue } = chekinReducer.actions;
+export const { setChekinFromModal, setTriggerChekin, setDeleteCheckIssue, setDeleteCheckin } = chekinReducer.actions;
 export default chekinReducer.reducer;
 

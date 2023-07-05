@@ -12,13 +12,14 @@ import { Tooltip } from '@chakra-ui/react';
 import API from '../../services';
 import { useDispatch, useSelector } from 'react-redux'
 import ModalDropbox from '../Modal/ModalDropbox';
+import { setTriggerChekin } from '../../features/chekinSlices';
 
 const TableAdmin = () => {
 
     const [dataChekin, setDataChekin] = useState([])
-    const [tanggal, setTanggal] = useState('')
     const { isOpen, onOpen, onClose } = useDisclosure()
     const stateLogin = useSelector(state => state.login)
+    const stateChekin = useSelector(state => state.chekin)
     const dispatch = useDispatch()
     const toast = useToast({
         position: 'top-right',
@@ -61,9 +62,12 @@ const TableAdmin = () => {
     }, [stateLogin.loading])
 
     useEffect(() => {
-        console.log("tanggal kembali", tanggal)
-    },[tanggal])
-
+        getDataMyChekin()
+        console.log("ini ketrigger ngga ????")
+        setTimeout(() => {
+            dispatch(setTriggerChekin(false))
+        }, 1000)
+    }, [stateChekin.triggerChekin])
 
 
 

@@ -2,7 +2,6 @@ import React, { useRef } from "react";
 import { Center, Box, Text, VStack, Input, Button, useToast, Divider  } from "@chakra-ui/react";
 
 export const TemplateReceipt = React.forwardRef(( props, ref) => {
-
     
     return (
         <div ref={ref}>
@@ -19,9 +18,9 @@ export const TemplateReceipt = React.forwardRef(( props, ref) => {
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "5px", marginBottom: "10px" }}>
                     <h4 style={{ margin: "0px", fontWeight: "bold" }}>Bukti Peminjaman</h4>
                 </div>
-                <div style={{ display: "flex", marginBottom: "5px" }}>
+                {/* <div style={{ display: "flex", marginBottom: "5px" }}>
                     <h4 style={{ margin: "0px", fontSize: "12px" }}>No Pinjam. 0001</h4>
-                </div>
+                </div> */}
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "10px" }}>
                     <table style={{ width: "100%",padding: "5px", fontSize: "12px", textAlign: "center"}}>
                         <thead>

@@ -1,6 +1,7 @@
 import { Button, Tab, TabList, TabPanel, TabPanels, Tabs, useToast } from '@chakra-ui/react'
 import Images from '../assets/perpus.png'
 import TableAdmin from '../Components/Table/TableAdmin'
+import TableAdminSuccess from '../Components/Table/TableAdminSuccess'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useState } from 'react'
@@ -19,6 +20,8 @@ const dashboardAdmin = () => {
         // window.location.href = '/admin'
         navigate('/admin')
     }
+
+    
 
     return (
         <div className="h-screen">
@@ -54,7 +57,7 @@ const dashboardAdmin = () => {
                                     <TableAdmin />
                                 </TabPanel>
                                 <TabPanel>
-                                <p>two!</p>
+                                    <TableAdminSuccess />
                                 </TabPanel>
                             </TabPanels>
                         </div>

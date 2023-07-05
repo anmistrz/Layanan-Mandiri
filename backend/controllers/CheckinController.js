@@ -25,12 +25,20 @@ CheckinController.get('/admin/list', adminSession, verifyAdmin, async (req, res,
     response.sendResponse(res, await m$checkin.listPending(req.user.userid))
 })
 
+CheckinController.get('/admin/list/success', adminSession, verifyAdmin, async (req, res, next) => {
+    response.sendResponse(res, await m$checkin.listSuccess(req.user.userid))
+})
+
 CheckinController.get('/admin/list/:barcode', adminSession, verifyAdmin, async (req, res, next) => {
     response.sendResponse(res, await m$checkin.checkDropbox(req.user.userid, req.params.barcode))
 })
 
 CheckinController.get('/mylist/:barcode',  async (req, res, next) => {
     response.sendResponse(res, await m$checkin.checkMyIssues(req.params.barcode))
+})
+
+CheckinController.post('/admin/checkbook', adminSession, verifyAdmin, async (req, res, next) => {
+    response.sendResponse(res, await m$checkin.updateStatusDropbox(req.user.userid, req.body))
 })
 
 

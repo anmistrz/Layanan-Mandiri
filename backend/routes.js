@@ -4,6 +4,7 @@ const IssuesController = require("./controllers/IssuesController")
 const RenewController = require("./controllers/RenewController")
 const SuggestController = require("./controllers/SuggestController")
 const CheckinController = require("./controllers/CheckinController")
+const NotificationController = require("./controllers/NotificationController")
 
 const _routes = [
     ['/login', AuthController],
@@ -11,7 +12,8 @@ const _routes = [
     ['/issues',IssuesController],
     ['/renew', RenewController],
     ['/suggest', SuggestController],
-    ['/checkin', CheckinController]
+    ['/checkin', CheckinController],
+    ['/notification', NotificationController]
     // ['/articles', ArticleController],
     // ['/comments', CommentController]
 ]

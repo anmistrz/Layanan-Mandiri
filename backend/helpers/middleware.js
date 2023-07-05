@@ -1,5 +1,5 @@
 const mysql = require('../helpers/database')
-const config = require('../config/app.config.json')
+const config = require('../config/app.config')
 const jwt = require('jsonwebtoken')
 
 

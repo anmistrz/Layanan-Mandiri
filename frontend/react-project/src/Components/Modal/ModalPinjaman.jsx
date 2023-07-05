@@ -64,6 +64,12 @@ const ModalPinjaman = (props) => {
     const {isOpen, onOpen, onClose} = useDisclosure()
 
 
+    const PricetoNumber = (price) => {
+        return Number(price.replace(/[^0-9.-]+/g,""))
+    }
+
+
+
 
 //-------------------------------CHECKOUT-------------------------------------------------
     const handleInputCheckout = (e) => {
@@ -90,13 +96,12 @@ const ModalPinjaman = (props) => {
                         isClosable: true,
                     })
                 }else{
-                    return (
-                        dispatch(getIssues(InputBarcodeCheckout.barcode)),
-                        setTimeout(() => {
-
-                            setInputBarcodeCheckout("")
-                        }, 1000)
-                    )
+                    const res = dispatch(getIssues(InputBarcodeCheckout.barcode))
+                    if(res.type === "getIssues/fulfilled"){
+                            setTimeout(() => {
+                                setInputBarcodeCheckout("")
+                            }, 1000)
+                    }
                 }
             }
         } catch (error) {
@@ -119,22 +124,44 @@ const ModalPinjaman = (props) => {
                 }),
             }
 
-            const res = await dispatch(addIssues(value))
-            const resUpdate =  await dispatch(updateIssues(value))
-            console.log("res issues", res)
-            if(res.type === "addIssues/fulfilled" && resUpdate.type === "updateIssues/fulfilled") {
-                dispatch(setTriggerIssue(true))
-                toast({
-                    title: "Checkout Success",
-                    status: "success",
-                    isClosable: true,
-                })
-                setInputBarcodeCheckout("")
-                setTimeout(() => {
-                    dispatch(setTriggerIssue(false))
-                    props.onClose()
-                }, 1000)
-            } else {
+            const res = await API.totalMyFines()
+            if(res){
+                if(PricetoNumber(res.data[0].Outstanding) > 30000){
+                    toast({
+                        title: "Anda memiliki denda, silahkan bayar dulu",
+                        status: "error",
+                        duration: 2000,
+                        isClosable: true,
+                    })
+                    return props.onClose()
+
+                }else{
+                    const res = await dispatch(addIssues(value))
+                    const resUpdate =  await dispatch(updateIssues(value))
+                    console.log("res issues", res)
+                    if(res.type === "addIssues/fulfilled" && resUpdate.type === "updateIssues/fulfilled") {
+                        dispatch(setTriggerIssue(true))
+                        toast({
+                            title: "Checkout Success",
+                            status: "success",
+                            isClosable: true,
+                        })
+                        setInputBarcodeCheckout("")
+                        onOpen()
+                        setTimeout(() => {
+                            dispatch(setTriggerIssue(false))
+                            // props.onClose()
+                        }, 1000)
+                    } else {
+                        toast({
+                            title: "Checkout Failed",
+                            status: "error",
+                            duration: 2000,
+                            isClosable: true,
+                        })
+                    }
+                }
+            }else{
                 toast({
                     title: "Checkout Failed",
                     status: "error",
@@ -142,21 +169,6 @@ const ModalPinjaman = (props) => {
                     isClosable: true,
                 })
             }
-            // dispatch(addIssues(value))
-            // setTimeout(() => {
-            //     dispatch(updateIssues(value))
-            // }, 1000)
-            // dispatch(setTriggerIssue(true))
-            // toast({
-            //     title: "Checkout Success",
-            //     status: "success",
-            //     isClosable: true,
-            // })
-            // setInputBarcodeCheckout("")
-            // setTimeout(() => {
-            //     dispatch(setTriggerIssue(false))
-            //     props.onClose()
-            // }, 1000)
 
 
     
@@ -180,6 +192,15 @@ const ModalPinjaman = (props) => {
             const res = await API.getDetailRenew(stateRenew.selectedValue)
             console.log('res refressh detail data modal', res.data[0])
             dispatch(setDataFromModal(res.data))
+            if(res.message === 'Not authorized Error. Token Expired'){
+                toast({
+                    title: "Token Expired",
+                    status: "error",
+                    duration: 2000,
+                    isClosable: true,
+                })
+                window.location.reload()
+            }
         }catch(error){
             console.log(error)
         }
@@ -264,7 +285,7 @@ const ModalPinjaman = (props) => {
                                     </Center>
                                 ) : (
                                     <>
-                                        {stateIssue.listBarcodeIssue.length > 0 ? (
+                                        {stateIssue.listBarcodeIssue.length > 0 && stateIssue.listBarcodeIssue !== undefined ? (
                                             <>
                                                 <table className="table table-striped w-full mx-auto text-center my-3">
                                                     <thead>
@@ -300,17 +321,17 @@ const ModalPinjaman = (props) => {
                             </Box>
                         </ModalBody>
                         <ModalFooter>
-                            {/* <div>
-                                <ReactToPrint
+                            <div>
+                                {/* <ReactToPrint
                                     trigger={() => <button>Print this out!</button>}
                                     content={() => componentRef.current}
                                     pageStyle={ "@page { size: 80mm 80mm; margin: 0mm auto ; } @media print { body { -webkit-print-color-adjust: exact; } }" }
-                                />
+                                /> */}
                                 <div style={{ display: 'none' }}>
                                     <TemplateReceipt ref={componentRef} data={stateIssue.listBarcodeIssue} />
                                 </div>
                             </div>
-                            <Button colorScheme="teal" mr={3} onClick={() => {
+                            {/* <Button colorScheme="teal" mr={3} onClick={() => {
                                 onOpen()
                             }}>
                                 Test
@@ -332,7 +353,7 @@ const ModalPinjaman = (props) => {
                             </Button>
                         </ModalFooter>
                     </ModalContent>
-                    <ModalPrint isOpen={isOpen} onClose={onClose} size="xl" />
+                    <ModalPrint isOpen={isOpen} onClose={onClose} size="sm" />
                 </Modal>
             ) :
             props.type === "RENEW" && (

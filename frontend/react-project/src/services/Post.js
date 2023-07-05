@@ -9,7 +9,6 @@ const Post = async (path, data) => {
         }
     }
     try {
-        console.log('data postt: ', data)
         const res = await baseAPI.baseAPI.post(`${baseURL}${path}`, data, config);
         return res;
 

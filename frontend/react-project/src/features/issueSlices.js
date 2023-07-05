@@ -87,8 +87,10 @@ const issueReducer = createSlice({
         [getIssues.fulfilled]: (state, action) => {
             state.loading = false;
             // console.log('Payload:', action.payload);
-            state.listBarcodeIssue =[...state.listBarcodeIssue, action.payload[0]];
-            console.log('listBarcodeIssue: ', state.listBarcodeIssue);
+            if(action.payload.length > 0){
+                state.listBarcodeIssue =[...state.listBarcodeIssue, action.payload[0]];
+                console.log('listBarcodeIssue: ', state.listBarcodeIssue);
+            }
         },
 
         [addIssues.pending]: (state, action) => {
@@ -101,7 +103,7 @@ const issueReducer = createSlice({
         [addIssues.fulfilled]: (state, action) => {
             state.loading = false;
             // state.issue = action.payload;
-            state.listBarcodeIssue.length = 0;
+            // state.listBarcodeIssue.length = 0;
             console.log('state Add issue fulffiled: ');
         },
 

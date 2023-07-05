@@ -1,7 +1,6 @@
 const mariadb = require('mariadb')
-const config = require('../config/app.config.json')
+const config = require('../config/app.config')
 const pool = mariadb.createPool(config.db)
-
 class _database {
     escapeUndefined = (value) => {
         if(!(value instanceof Object)) {

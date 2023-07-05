@@ -32,8 +32,7 @@ import {
 import { useFormik, ErrorMessage } from 'formik';
 import { USER_VALIDATION } from "../../validation/validation";
 import { useDispatch, useSelector } from "react-redux";
-import { setTriggerUpdateProfile, updateUser } from "../../features/loginSlices";
-import { checkDropboxBuku } from "../../features/chekinSlices";
+import { checkDropboxBuku, setDeleteCheckin, setTriggerChekin, updateCheckDropbox } from "../../features/chekinSlices";
 
 
 const ModalDropbox = (props) => {
@@ -84,6 +83,47 @@ const ModalDropbox = (props) => {
             console.log(error)
         }
     }
+
+    const handleDeleteListCheckout = (barcode) => {
+        const filter = stateDropbox.listDropboxBookPending.filter((item) => item.barcode !== barcode)
+        dispatch(setDeleteCheckin(filter))
+    }
+
+    const submitCheckDropbox = async() => {
+        try {
+            const value = {
+                data: stateDropbox.listDropboxBookPending.map((item) => {
+                    return {
+                        barcode: item.barcode,
+                    }
+                }),
+            }
+
+            const res = await dispatch(updateCheckDropbox(value))
+
+            if(res.type === 'updateCheckDropbox/fulfilled'){
+                dispatch(setTriggerChekin(true))
+                toast({
+                    title: "Berhasil melakukan checkin",
+                    status: "success",
+                    duration: 2000,
+                    isClosable: true,
+                })
+                props.onClose()
+            } else {
+                toast({
+                    title: "Gagal melakukan checkin",
+                    status: "error",
+                    duration: 2000,
+                    isClosable: true,
+                })
+            }
+        } catch (error) {
+            console.log(error)
+            
+        }
+    }
+            
 
 
     useEffect(() => {
@@ -156,7 +196,7 @@ const ModalDropbox = (props) => {
                             <Button colorScheme="red" mr={3} onClick={props.onClose}>
                                 Close
                             </Button>
-                            <Button mr={3} colorScheme="blue" type="submit" >
+                            <Button onClick={submitCheckDropbox} mr={3} colorScheme="blue" type="submit" >
                                     Scan Buku
                             </Button>
                         </ModalFooter>

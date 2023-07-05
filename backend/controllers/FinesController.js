@@ -3,6 +3,7 @@ const m$fines = require('../modules/fines.modules');
 const response = require('../helpers/response');
 const { userSession } = require('../helpers/middleware');
 
+
 const FinesController = Router();
 
 /**
@@ -18,6 +19,10 @@ FinesController.get('/user/total',userSession, async (req, res, next) => {
 
 FinesController.get('/user/list', userSession, async (req, res, next) => {
     response.sendResponse(res, await m$fines.listMyFines(req.user.cardnumber))
+})
+
+FinesController.post('/charge', userSession, async (req, res, next) => {
+    response.sendResponse(res, await m$fines.chargeFines(req.user.cardnumber, req.body))
 })
 
 

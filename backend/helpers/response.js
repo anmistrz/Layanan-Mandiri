@@ -7,9 +7,20 @@ class _response {
                 res.send(data)
                 return true
             }
+
+            if(data === undefined){
+                res.status(404)
+                res.send({
+                    status: false,
+                    error: 'Not Found'
+                })
+                return false
+            }
+
             res.status(data && data.status ? 200 : 500)
             res.send(data)
             return true
+
         }catch(error){
             console.error('SendResponse Helper Error: ', error)
 

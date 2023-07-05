@@ -14,6 +14,11 @@ const addIssues = (data) => Post("/issues/add", data ?? {});
 const addStatisticRenew = (data) => Post("/renew/statistics", data ?? {});
 const addSuggest = (data) => Post("/suggest", data ?? {});
 const addChekin = (data) => Post("/checkin/user/add", data ?? {});
+const addpayFines = () => Post("/fines/charge");
+const getNotification = () => Post("/notification");
+const updateCheckDropbox = (data) => Post("/checkin/admin/checkbook", data ?? {});
+
+
 
 
 
@@ -30,7 +35,9 @@ const checkIssues = (id) => Get(`/checkin/mylist/${id}`)
 const totalMyFines = () => Get("/fines/user/total");
 const listMyFines = () => Get("/fines/user/list");
 const listCheckinPending = () => Get("/checkin/admin/list");
+const listCheckinSuccess = () => Get("/checkin/admin/list/success");
 const getListCheckinPending = (id) => Get(`/checkin/admin/list/${id}`); 
+
 
 
 
@@ -74,7 +81,11 @@ const API = {
     totalMyFines,
     listMyFines,
     listCheckinPending,
+    listCheckinSuccess,
     getListCheckinPending,
+    addpayFines,
+    getNotification,
+    updateCheckDropbox,
 
 }
 

@@ -1,6 +1,6 @@
 const mysql = require('../helpers/database')
 const jwt = require('jsonwebtoken')
-const config = require('../config/app.config.json')
+const config = require('../config/app.config')
 const date = require('date-and-time')
 const Joi = require('joi')
 const Bcrypt = require('bcrypt')
