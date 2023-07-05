@@ -17,23 +17,3 @@ module.exports = {
         expiresIn: Number(process.env.JWT_EXPIRES_IN_INDEX)
     },
 }
-
-
-
-// {
-//     "db": {
-//         "host": "103.226.174.227",
-//         "port": 3360,
-//         "user": "scholarship",
-//         "password": "scholarship123",
-//         "database": "koha"
-//     },
-//     "jwt": {
-//         "secret": "secret-key-jwt",
-//         "expiresIn": 1800000
-//     },
-//     "jwtIndex": {
-//         "secret": "secret-key-jwt",
-//         "expiresIn": 43200000
-//     }
-// }
