@@ -106,6 +106,7 @@ const TablePinjaman = () => {
                 Cell : ({row}) => {
                     const overdue = new Date(row.original.date_due) < new Date()
                     return (
+                        <>
                             <Box>
                                 {overdue ? (
                                     <Tooltip label="Overdue" aria-label="Overdue">
@@ -121,7 +122,8 @@ const TablePinjaman = () => {
                                         { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                                     </span>
                                 )}
-                            </Box>                            
+                            </Box>  
+                        </>                          
                     )
                 }
             },

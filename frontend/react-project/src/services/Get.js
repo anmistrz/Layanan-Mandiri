@@ -7,7 +7,7 @@ import baseAPI from '../utils/axiosConfig';
 const Get = async (path) => {
     try {
         const res = await baseAPI.baseAPI.get(`${baseURL}${path}`);
-        console.log('res get: ', res);
+
         return res;
 
     } catch (err) {

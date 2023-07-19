@@ -146,8 +146,8 @@ const ModalPinjaman = (props) => {
                             status: "success",
                             isClosable: true,
                         })
-                        setInputBarcodeCheckout("")
                         onOpen()
+                        setInputBarcodeCheckout("")
                         setTimeout(() => {
                             dispatch(setTriggerIssue(false))
                             // props.onClose()

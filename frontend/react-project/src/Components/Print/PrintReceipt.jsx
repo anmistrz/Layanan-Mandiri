@@ -11,7 +11,7 @@ const PrintReceipt = () => {
       <ReactToPrint
         trigger={() => <button>Print this out!</button>}
         content={() => componentRef.current}
-        pageStyle={ "@page { width: 80mm;  margin: 0mm auto; } @media print { body { -webkit-print-color-adjust: exact; } }"}
+        pageStyle={ "@page { width: 80mm; height: 80mm; margin: 0mm auto ; } @media print { body { -webkit-print-color-adjust: exact; } }" }
       />
       <div style={{ display: 'none' }}>
         <TemplateReceipt ref={componentRef} />

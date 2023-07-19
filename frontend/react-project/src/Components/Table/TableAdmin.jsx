@@ -103,7 +103,7 @@ const TableAdmin = () => {
                 Header: 'Status',
                 accessor: 'status',
                 Cell: ({ row }) => (
-                    <div>
+                    <>
                         {row.original.status === 'CHECKIN PENDING' ? (
                             <span className="text-yellow-500">
                                 <Badge colorScheme="yellow">{row.original.status}</Badge>
@@ -121,7 +121,7 @@ const TableAdmin = () => {
                                 <Badge colorScheme="blue">{row.original.status}</Badge>
                             </span>
                         )}
-                    </div>
+                    </>
                 ),
             },
         ],

@@ -1,5 +1,7 @@
 module.exports = {
-    content: ["./src/**/*.{js,cjs,jsx,ts,tsx}"],
+    content: [
+      "index.html",
+      "./src/**/*.{js,cjs,jsx,ts,tsx}"],
     theme: {
       extend: {
         screens: {
