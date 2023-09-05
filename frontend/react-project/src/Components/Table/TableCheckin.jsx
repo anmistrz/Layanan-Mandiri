@@ -15,23 +15,21 @@ import { useDispatch, useSelector } from 'react-redux'
 const TableChekin = () => {
 
     const [dataChekin, setDataChekin] = useState([])
-    const [selectedSuggest, setSelectedSuggest] = useState({})
-    const [type, setType] = useState('')
-    const { isOpen, onOpen, onClose } = useDisclosure()
     const states = useSelector(state => state.login)
-    const stateSuggest = useSelector(state => state.suggest)
-    const dispatch = useDispatch()
-    const toast = useToast({
-        position: 'top-right',
-        variant: 'left-accent',
-        isClosable: true,
-        duration: 2000
-    })
-
 
     const getDataMyChekin = async () => {
         try {
+            
             const res = await API.getListMyCheckin()
+            if(res.message === 'Not authorized Error. Token Expired'){
+                toast({
+                    title: "Token Expired",
+                    status: "error",
+                    duration: 2000,
+                    isClosable: true,
+                })
+                window.location.reload()
+            }
             console.log("res", res.data)
             setDataChekin(res.data)
         } catch (error) {

@@ -17,7 +17,7 @@ const index = () => {
                 <Navbar />
                 <ScanUserLogin />
                 {/* <Text fontSize='sm' textAlign='center'>{state.users.userid}</Text> */}
-                <Box w='100%'  p='5px' mt="200px" >
+                <Box w='100%' position='fixed' bottom='0' bg='white' p='5px' >
                     <Text fontSize='sm' textAlign='center'>© All rights reserved by UMS Library - 2022™</Text>
                 </Box>
             </div>

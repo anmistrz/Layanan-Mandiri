@@ -33,6 +33,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ReactToPrint from 'react-to-print';
 import { TemplateReceipt } from "../Print/TemplateReceipt";
 import ModalPrint from "./ModalPrint";
+import { el } from "date-fns/locale";
 
 const ModalPinjaman = (props) => {
 
@@ -52,6 +53,7 @@ const ModalPinjaman = (props) => {
     const stateIssue = useSelector(state => state.issue)
     const [InputBarcodeCheckout, setInputBarcodeCheckout] = useState({})
     const [selectedListCheckout, setSelectedListCheckout] = useState([{}])
+    const [disabledCheckoutButton, setDisabledCheckoutButton] = useState(true)
     const toast = useToast({
         position: 'top-right',
         duration: 2000,
@@ -73,11 +75,24 @@ const ModalPinjaman = (props) => {
 
 //-------------------------------CHECKOUT-------------------------------------------------
     const handleInputCheckout = (e) => {
+        if(InputBarcodeCheckout == ''){
+            setDisabledCheckoutButton(true)
+        }
         setInputBarcodeCheckout({...InputBarcodeCheckout, [e.target.name]: e.target.value})
         console.log("InputBarcode", InputBarcodeCheckout)
     }
 
-    const handleAddListCheckout = () => {
+    useEffect (() => {
+        if(InputBarcodeCheckout.barcode !== '' && InputBarcodeCheckout.barcode !== undefined){
+            setDisabledCheckoutButton(false)
+        }else{
+            setDisabledCheckoutButton(true)
+        }
+    }, [InputBarcodeCheckout])
+
+
+    const handleAddListCheckout = (e) => {
+        e.preventDefault()
         try{
             if(InputBarcodeCheckout.barcode === '' || InputBarcodeCheckout.barcode === undefined){
                 return toast({
@@ -125,7 +140,8 @@ const ModalPinjaman = (props) => {
             }
 
             const res = await API.totalMyFines()
-            if(res){
+            if(res) {
+
                 if(PricetoNumber(res.data[0].Outstanding) > 30000){
                     toast({
                         title: "Anda memiliki denda, silahkan bayar dulu",
@@ -136,46 +152,62 @@ const ModalPinjaman = (props) => {
                     return props.onClose()
 
                 }else{
-                    const res = await dispatch(addIssues(value))
-                    const resUpdate =  await dispatch(updateIssues(value))
-                    console.log("res issues", res)
-                    if(res.type === "addIssues/fulfilled" && resUpdate.type === "updateIssues/fulfilled") {
-                        dispatch(setTriggerIssue(true))
-                        toast({
-                            title: "Checkout Success",
-                            status: "success",
-                            isClosable: true,
-                        })
-                        onOpen()
-                        setInputBarcodeCheckout("")
-                        setTimeout(() => {
-                            dispatch(setTriggerIssue(false))
-                            // props.onClose()
-                        }, 1000)
-                    } else {
+                    if (stateIssue.listBarcodeIssue.length < 1 && stateIssue.listBarcodeIssue === undefined) {
                         toast({
                             title: "Checkout Failed",
+                            description: "Tidak ada data yang di checkout",
                             status: "error",
                             duration: 2000,
                             isClosable: true,
                         })
+
+                    } else {
+
+                        const res = await dispatch(addIssues(value))
+                        const resUpdate =  await dispatch(updateIssues(value))
+                        console.log("res issues", res)
+                        if(res.type === "addIssues/fulfilled" && resUpdate.type === "updateIssues/fulfilled") {
+                            if(res.payload.length > 0) {
+                                dispatch(setTriggerIssue(true))
+                                toast({
+                                    title: "Checkout Success",
+                                    status: "success",
+                                    isClosable: true,
+                                })
+                                onOpen()
+                                setInputBarcodeCheckout("")
+                                setTimeout(() => {
+                                    dispatch(setTriggerIssue(false))
+                                    // props.onClose()
+                                }, 1000)
+                            
+                            } else {
+                                toast({
+                                    title: "Checkout Failed",
+                                    description: "Tidak ada data yang di checkout",
+                                    status: "error",
+                                    duration: 2000,
+                                    isClosable: true,
+                                })
+                            }
+                        } else {
+                            toast({
+                                title: "Checkout Failed",
+                                description: "Buku telah dipinjam",
+                                status: "error",
+                                duration: 2000,
+                                isClosable: true,
+                            })
+                        }
                     }
                 }
-            }else{
-                toast({
-                    title: "Checkout Failed",
-                    status: "error",
-                    duration: 2000,
-                    isClosable: true,
-                })
             }
-
-
     
         } catch (error) {
             toast({
                 title: "Checkout Failed",
                 status: "error",
+                description: error.message,
                 duration: 2000,
                 isClosable: true,
             })
@@ -264,12 +296,14 @@ const ModalPinjaman = (props) => {
                             <FormLabel>Masukkan Barcode</FormLabel>
                             <Box display="flex" flexDirection="column" alignItems="center">
                                 <Input
+                                    autoFocus
                                     name="barcode"
                                     placeholder="Masukkan Barcode"
                                     onChange={handleInputCheckout}
+                                    onKeyUp={e => e.key === 'Enter' ? handleAddListCheckout(e) : null}
                                 />
-                                <Button mt={4} w='50%' colorScheme="blue" onClick={handleAddListCheckout}>
-                                    Tambah Checkout Buku
+                                <Button mt={4} w='50%' colorScheme="blue" onClick={handleAddListCheckout} isLoading={stateIssue.loading}>
+                                    Scan Buku
                                 </Button>
                             </Box>
                             <Box my={4} display="flex" flexDirection="column" alignItems="center">
@@ -348,7 +382,7 @@ const ModalPinjaman = (props) => {
                                 }}>
                                 Close
                             </Button>
-                            <Button colorScheme="blue" mr={3} onClick={handleSubmitCheckout}>
+                            <Button isDisabled={disabledCheckoutButton} colorScheme="blue" mr={3} onClick={handleSubmitCheckout}>
                                 Checkout
                             </Button>
                         </ModalFooter>

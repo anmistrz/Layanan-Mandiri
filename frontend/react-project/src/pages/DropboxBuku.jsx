@@ -32,6 +32,7 @@ import { addChekin, deleteChekin, updateChekin, checkMyIssues, setDeleteCheckIss
 const dropBoxBuku = () => {
     const [InputBarcodeCheckin, setInputBarcodeCheckin] = useState({})
     const [loading, setLoading] = useState(false)
+    const [disabledCheckinButton, setDisabledCheckinButton] = useState(true)
     const stateChekin = useSelector(state => state.chekin)
     const dispatch = useDispatch()
     const toast = useToast({
@@ -43,6 +44,14 @@ const dropBoxBuku = () => {
         setInputBarcodeCheckin({...InputBarcodeCheckin, [e.target.name]: e.target.value})
         console.log("InputBarcode", InputBarcodeCheckin)
     }
+
+    useEffect (() => {
+        if(InputBarcodeCheckin.barcode !== '' && InputBarcodeCheckin.barcode !== undefined){
+            setDisabledCheckinButton(false)
+        }else{
+            setDisabledCheckinButton(true)
+        }
+    }, [InputBarcodeCheckin])
     
     const handleAddListCheckin = async() => {
         try{
@@ -197,7 +206,7 @@ const dropBoxBuku = () => {
                             )}
                         </Center>
                         <Center>
-                            <Button colorScheme="blue" mt="4" w="sm" onClick={handleSubmitChekin} isLoading={loading} >Submit</Button>
+                            <Button isDisabled={disabledCheckinButton} colorScheme="blue" mt="4" w="sm" onClick={handleSubmitChekin} isLoading={loading} >Submit</Button>
                         </Center>                         
                     </Box>
                     <Box w="50%" h="md" boxShadow="2xl" rounded="md" p="4" bgColor={"white"}>

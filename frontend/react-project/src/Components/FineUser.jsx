@@ -50,8 +50,8 @@ const FineUser = () => {
     const initSnap = async() => {
         try {
             const snapScript = document.createElement('script')
-            snapScript.src = import.meta.env.MIDTRANS_IS_PRODUCTION ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js'
-            snapScript.setAttribute('data-client-key', import.meta.env.CLIENT_KEY_SANDBOX)
+            snapScript.src = process.env.MIDTRANS_IS_PRODUCTION ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js'
+            snapScript.setAttribute('data-client-key', process.env.CLIENT_KEY_SANDBOX)
             document.head.appendChild(snapScript)
 
             return () => {

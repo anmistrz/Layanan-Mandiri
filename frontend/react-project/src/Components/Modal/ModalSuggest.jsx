@@ -33,12 +33,9 @@ import { addSuggest, updateSuggest, setTriggerSuggest, setTriggerDetailSuggest }
 import { MdOutlineWarningAmber } from 'react-icons/md';
 import { useFormik } from "formik";
 import { SUGGEST_VALIDATION } from "../../validation/validation";
-import { tr } from "date-fns/locale";
-
 
 const ModalSuggest = (props) => {
 
-    const [DataInputSuggest, setDataInputSuggest] = useState({})
     const dispatch = useDispatch()
     const stateSuggest = useSelector(state => state.suggest)
     const toast = useToast({
@@ -49,6 +46,7 @@ const ModalSuggest = (props) => {
     })
 
 
+    // Untuk Tambah Ulasan
     const formikInput = useFormik({
         initialValues: {
             title: '',
@@ -57,16 +55,21 @@ const ModalSuggest = (props) => {
             note: ''
         },
 
-        onSubmit: (values) => {
+        onSubmit: async (values, {resetForm}) => {
             try {
-                dispatch(addSuggest(values))
-                dispatch(setTriggerSuggest(true))
-                toast({
-                    title: 'Suggest a Book',
-                    description: 'Tambah Ulasan Berhasil',
-                    status: 'success'
-                })
-                props.onClose()
+                const res = await dispatch(addSuggest(values))
+                if(res.type == "addSuggest/fulfilled"){
+
+                    dispatch(setTriggerSuggest(true))
+                    toast({
+                        title: 'Suggest a Book',
+                        description: 'Tambah Ulasan Berhasil',
+                        status: 'success'
+                    })
+                    resetForm({values: ''})
+                    props.onClose()
+
+                } 
             } catch (error) {
                 toast({
                     title: 'Suggest a Book',
@@ -76,7 +79,8 @@ const ModalSuggest = (props) => {
             }
         },
 
-        validationSchema: SUGGEST_VALIDATION
+        validationSchema: SUGGEST_VALIDATION,
+        validateOnChange: true
     })
     
 
@@ -101,6 +105,7 @@ const ModalSuggest = (props) => {
                     description: 'Edit Usulan Berhasil',
                     status: 'success'
                 })
+                values = {}
                 props.onClose()
             } catch (error) {
                 toast({
@@ -202,7 +207,7 @@ const ModalSuggest = (props) => {
                                     //     handleSubmitSuggest(DataInputSuggest)
                                     // }}
                                     type="submit"
-                                    isLoading={formik.isSubmitting}
+                                    isLoading={formikInput.isSubmitting}
                                 >
                                     Tambah Usulan
                                 </Button>
@@ -258,7 +263,7 @@ const ModalSuggest = (props) => {
                                     //     console.log("DataInput ke Edit Suggest", DataInputSuggest)
                                     // }}
                                     type="submit"
-                                    isLoading={stateSuggest.loading}
+                                    isLoading={formik.isSubmitting}
                                 >
                                     Edit Usulan Buku
                                 </Button>

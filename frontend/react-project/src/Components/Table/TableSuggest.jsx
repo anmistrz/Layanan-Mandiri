@@ -99,7 +99,7 @@ const TableSuggest = () => {
                 accessor: 'suggesteddate',
             },
             {
-                Header: 'Nama Buku',
+                Header: 'Judul Buku',
                 accessor: 'title',
                 Cell: ({ row }) => {
                     return (
@@ -124,7 +124,7 @@ const TableSuggest = () => {
                 accessor: 'author',
             },
             {
-                Header: 'Publisher Code',
+                Header: 'Penerbit',
                 accessor: 'publishercode',
             },
             {
@@ -253,7 +253,7 @@ const TableSuggest = () => {
                             <Box overflowY="auto" overflowX="hidden" maxHeight='280px' >
                                 {(rows.length > 0) ? (
                                     <table {...getTableProps()} className="min-w-full leading-normal">
-                                        <thead>
+                                        <thead position="sticky" className="sticky top-0">
                                             {headerGroups.map(headerGroup => (
                                                 <tr {...headerGroup.getHeaderGroupProps()}>
                                                     {headerGroup.headers.map(column => (
@@ -308,7 +308,7 @@ const TableSuggest = () => {
                                                                             </Tooltip>
                                                                             <Tooltip label='Delete Suggest Buku' fontSize='md'>
                                                                                 <button className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 font-bold  rounded"
-                                                                                    type='RETURN'
+                                                                                    type='DELETE_SUGGEST'
                                                                                     onClick={() => {
                                                                                         console.log("seelectedSuggest", cell.row.values)
                                                                                         handleDeleteSuggest(cell.row.values.suggestionid)

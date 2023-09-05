@@ -31,6 +31,15 @@ const TablePinjaman = () => {
     const getDataPinjaman = async () => {
         try {
             const res = await API.getIssues()
+            if(res.message === 'Not authorized Error. Token Expired'){
+                toast({
+                    title: "Token Expired",
+                    status: "error",
+                    duration: 2000,
+                    isClosable: true,
+                })
+                window.location.reload()
+            }
             if (res.data) {
                 setTimeout(() => {
                     dispatch(setTriggerRenew(false))
@@ -128,7 +137,7 @@ const TablePinjaman = () => {
                 }
             },
             {
-                Header: 'Nama Buku',
+                Header: 'Judul Buku',
                 accessor: 'title',
             },
             {
@@ -136,7 +145,7 @@ const TablePinjaman = () => {
                 accessor: 'barcode',
             },
             {
-                Header: 'Renewals',
+                Header: 'Jumlah Perpanjangan Buku',
                 accessor: 'renewals',
             },
             {
@@ -194,7 +203,7 @@ const TablePinjaman = () => {
                                     onOpen()
                                 }}
                             >
-                                <MdOutlineLibraryAdd /> Checkout Buku
+                                <MdOutlineLibraryAdd /> Pinjam Buku
                             </Button>
                         </div>
 
@@ -289,7 +298,7 @@ const TablePinjaman = () => {
                                                                                 </div>
                                                                                 {(cell.column.Header === 'Options') ? (
                                                                                     <div className='flex items-center gap-2'>
-                                                                                        <Tooltip label='Renew Book' fontSize='md'>
+                                                                                        <Tooltip label='Perpanjangan Buku' fontSize='md'>
                                                                                             <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 font-bold rounded"
                                                                                                 type='RENEW'
                                                                                                 onClick={() => {

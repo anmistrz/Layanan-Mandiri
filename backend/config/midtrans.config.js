@@ -1,5 +1,6 @@
 const midtransClient = require('midtrans-client');
-require('dotenv').config()
+const path = require('path');
+require('dotenv').config();
 module.exports = {
     // Create Core API instance
     snap: new midtransClient.Snap({

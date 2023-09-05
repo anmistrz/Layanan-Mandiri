@@ -79,10 +79,9 @@ const dashboardUser = () => {
 
 
     useEffect(() => {
-            const dataCookies = Cookies.certCookies()
-            setData(dataCookies)
-        console.log("data cookies", dataCookies)
-        // timeoutCookies()
+        const dataCookies = Cookies.certCookies()
+        setData(dataCookies)
+        // console.log("data cookies", dataCookies)
         getDataUser()
         getPhotoProfile()
     }, [])
@@ -100,8 +99,12 @@ const dashboardUser = () => {
             })
             navigate('/index')
         }
-
     }, [data])
+
+    useEffect(() => {
+        console.log("test timeoutcookies")
+        timeoutCookies()
+    },[])
 
     useEffect ( () => {
         console.log("image", urlImage)
@@ -126,7 +129,7 @@ const dashboardUser = () => {
                             <Heading fontSize='2xl' my={3} textAlign='center'>{data.surname}</Heading>
 
                             {(urlImage.image) ? (
-                                <Image boxSize='250px' mx="auto" src={'data:image/jpeg;base64,' + urlImage.image} alt="No Image Found" />
+                                <Image boxSize='250px' mx="auto" my={3} borderRadius='full' src={'data:image/jpeg;base64,' + urlImage.image} alt="No Image Found" />
                             ) : (
                                 <img boxSize='250px' src="https://www.kindpng.com/picc/m/80-807524_no-profile-hd-png-download.png" alt="No Profile, HD Png Download@kindpng.com"></img>
                             )}
@@ -197,7 +200,7 @@ const dashboardUser = () => {
                                     <TabPanel position='relative' height='450px'>
                                         <TableSuggest />
                                     </TabPanel>
-                                    <TabPanel width='1040px' height='450px'>
+                                    <TabPanel position='relative' width='1040px' height='450px'>
                                         <FineUser />
                                     </TabPanel>
                                 </TabPanels>

@@ -18,14 +18,15 @@ class _suggest {
             // console.log(borrowernumber)
 
             const schema = Joi.object({
-                suggestedby: Joi.number().required(),
+                suggestedby: Joi.number().optional(),
                 title: Joi.string().required(),
-                author: Joi.string().required(),
-                publishercode: Joi.string().required(),
-                note: Joi.string().optional()
+                author: Joi.string().optional().allow(''),
+                publishercode: Joi.string().optional().allow(''),
+                note: Joi.string().optional().allow('')
             })
 
             const validation = schema.validate(body)
+            console.log("validation: ", validation)
 
             if(validation.error){
                 const errorDetails = validation.error.details.map(detail => detail.message)

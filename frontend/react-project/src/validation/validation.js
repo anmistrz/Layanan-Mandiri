@@ -13,5 +13,7 @@ export const SUGGEST_VALIDATION = Yup.object().shape({
     title: Yup.string().required('Judul harus diisi'),
     author: Yup.string().optional(),
     publishercode : Yup.string().optional(),
-    publisheryear: Yup.number()
+    note: Yup.string().optional(),
 })
+
+

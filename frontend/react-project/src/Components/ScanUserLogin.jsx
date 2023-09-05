@@ -18,11 +18,13 @@ const ScanUserLogin = () => {
     })
 
     const handleInput = (e) => {
+        e.preventDefault();
         setIdcard({...idcard, [e.target.name]: e.target.value})
         console.log("setIdCard", idcard)
     }
 
-    const handleSubmit = async() => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try {
             setLoading(true)
             const res = await dispatch(loginUser({type: "LOGIN" ,payload: idcard}))
@@ -38,6 +40,14 @@ const ScanUserLogin = () => {
                         status: 'success',
                         isClosable: true,
                     })    
+            } else {
+                setLoading(false)
+                toast({
+                    title: 'Login Failed',
+                    description: 'ID Card TIdak Ditemukan',
+                    status: 'error',
+                    isClosable: true,
+                })
             }
         } catch(error) {
             toast({
@@ -60,8 +70,10 @@ const ScanUserLogin = () => {
                 <h1 className="text-4xl font-bold text-blue-500">UMS Digital Library Self Service Center</h1>
                 <Text fontSize='md' text='center'>Scan Your ID Card To Login</Text>
 
-                <Input placeholder="ID Card Number" name="cardnumber" w="2xl" h='50px' bgColor='white' onChange={handleInput} />
-                <Button onClick={handleSubmit} colorScheme="blue" w="sm" isLoading={loading} loadingText="Loading" >Login</Button>
+                <Input autoFocus placeholder="ID Card Number" name="cardnumber" w="2xl" h='50px' bgColor='white' onChange={handleInput}
+                 onKeyUp={e => e.key === 'Enter' ? handleSubmit(e) : null} />
+
+                <Button onClick={handleSubmit}  colorScheme="blue" w="sm" isLoading={loading} loadingText="Loading" >Login</Button>
             </VStack>
         </>
     )
