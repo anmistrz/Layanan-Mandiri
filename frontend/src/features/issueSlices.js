@@ -4,19 +4,25 @@ import Cookies from "../utils/cookies";
 import parseISO from "date-fns/parseISO";
 import parseJwt from "../utils/parseJwt";
 import { useSelector } from "react-redux";
+import { el } from "date-fns/locale";
 
 
 export const getIssues = createAsyncThunk(
     "getIssues",
     async (args, thunkAPI) => {
         // console.log("args getIssues", args);
-        try {
+        // try {
+
             const res = await API.getListCheckoutIssues(args);
-            // console.log('res getIssues: ', res);
-            return res.data;
-        }catch (err) {
-            return thunkAPI.rejectWithValue(err);
-        }
+            console.log('res getIssues: ', res);
+            if(res.data[0].barcode === args) {
+                return res.data;
+            } else {
+                return thunkAPI.rejectWithValue(res.error);
+            }
+        // }catch (err) {
+        //     return thunkAPI.rejectWithValue(err);
+        // }
     }
 );
 
@@ -86,8 +92,8 @@ const issueReducer = createSlice({
         },
         [getIssues.fulfilled]: (state, action) => {
             state.loading = false;
-            // console.log('Payload:', action.payload);
-            if(action.payload.length > 0){
+            console.log('Payload:', action.payload);
+            if(action.payload.length > 0 && action.payload !== undefined) {
                 state.listBarcodeIssue =[...state.listBarcodeIssue, action.payload[0]];
                 console.log('listBarcodeIssue: ', state.listBarcodeIssue);
             }

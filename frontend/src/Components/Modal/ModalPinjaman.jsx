@@ -75,7 +75,7 @@ const ModalPinjaman = (props) => {
 
 //-------------------------------CHECKOUT-------------------------------------------------
     const handleInputCheckout = (e) => {
-        if(InputBarcodeCheckout == ''){
+        if(InputBarcodeCheckout === '') {
             setDisabledCheckoutButton(true)
         }
         setInputBarcodeCheckout({...InputBarcodeCheckout, [e.target.name]: e.target.value})
@@ -301,6 +301,7 @@ const ModalPinjaman = (props) => {
                                     placeholder="Masukkan Barcode"
                                     onChange={handleInputCheckout}
                                     onKeyUp={e => e.key === 'Enter' ? handleAddListCheckout(e) : null}
+                                    pattern="^[0-9]*$"
                                 />
                                 <Button mt={4} w='50%' colorScheme="blue" onClick={handleAddListCheckout} isLoading={stateIssue.loading}>
                                     Scan Buku
@@ -372,6 +373,7 @@ const ModalPinjaman = (props) => {
                             </Button> */}
 
                             <Button colorScheme="red" mr={3} onClick={() => {
+                                    console.log("stateIssue", stateIssue.listBarcodeIssue)
                                     stateIssue.listBarcodeIssue.length > 0 ? (
                                         dispatch(setRefreshListIssue(true)),
                                         setInputBarcodeCheckout(""),
@@ -379,6 +381,8 @@ const ModalPinjaman = (props) => {
                                     ) : (
                                         props.onClose()
                                     )
+                                    // setInputBarcodeCheckout("")
+                                    // props.onClose()
                                 }}>
                                 Close
                             </Button>

@@ -158,6 +158,7 @@ const ModalSuggest = (props) => {
                             <ModalBody>
                                 <FormControl id="title" mt={4}>
                                     <FormLabel>Title</FormLabel>
+                                    <p className="text-red-500 text-sm">*Minimal judul buku wajib diisi</p>
                                     {formikInput.errors.title && formikInput.touched.title && (
                                         <Alert status="error">
                                             <AlertIcon />

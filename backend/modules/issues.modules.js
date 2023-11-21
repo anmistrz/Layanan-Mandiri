@@ -22,13 +22,22 @@ class _issues {
                 return this.toString()
             }
 
-            const list = await mysql.query("SELECT b.title, i.barcode, b.author FROM koha.biblio as b  LEFT JOIN koha.items as i on i.biblionumber = b.biblionumber WHERE i.barcode = ?",
+            const list = await mysql.query("SELECT b.title, i.barcode, i.ccode, b.author FROM koha.biblio as b  LEFT JOIN koha.items as i on i.biblionumber = b.biblionumber WHERE i.barcode = ?",
             [barcode]);
 
-            return {
-                status: true,
-                data: list
+            if(list[0].ccode === 'CAD') {
+                return {
+                    status: false,
+                    code: 400,
+                    error: 'This book is not for loan'
+                }
+            } else {
+                return {
+                    status: true,
+                    data: list
+                }
             }
+
         } catch (error){
             console.error("List issue module Error: ", error)
             return {
@@ -111,6 +120,8 @@ class _issues {
                 for(let i = 0; i < body.data.length; i++) {
                     const list = await mysql.query("SELECT b.borrowernumber, b.branchcode,b.categorycode,i.itemnumber,i.itype,i.ccode,i3.issuelength,i3.lengthunit,i.location FROM koha.borrowers as b LEFT JOIN koha.issuingrules as i3 on i3.categorycode = b.categorycode LEFT JOIN koha.items as i on i3.itemtype=i.itype AND i3.branchcode= 'PUSAT' where i.barcode = ? AND b.cardnumber = ?",
                     [body.data[i].barcode, body.cardnumber]);
+
+                    console.log(list);
 
                     if(list.length === 0) {
                         return {
@@ -211,6 +222,7 @@ class _issues {
             for(let i = 0; i < body.data.length; i++) {
                 const list = await mysql.query("SELECT date(i.date_due) as onloan, date(i.issuedate) as datelastborrowed, i.branchcode, i.itemnumber FROM koha.issues i LEFT JOIN koha.items b ON i.itemnumber = b.itemnumber WHERE b.barcode = ?",
                 [body.data[i].barcode]);
+                
                 const list2 = await mysql.query("SELECT issues from koha.items WHERE barcode = ?",
                 [body.data[i].barcode]);
 

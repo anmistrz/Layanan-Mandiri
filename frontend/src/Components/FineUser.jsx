@@ -79,14 +79,18 @@ const FineUser = () => {
                                 title: 'Payment Success',
                                 status: 'success',
                                 isClosable: true,
+                                preventDuplicate: true,
                             })
-                            dispatch(triggerFinesNotification(true))
+                            // dispatch(triggerFinesNotification(true))
+                            getListMyFines(),
+                            getTotalFines()
                         },
                         onPending: async function(result){
                             toast({
                                 title: 'Payment Pending',
                                 status: 'warning',
                                 isClosable: true,
+                                preventDuplicate: true,
                             })
                             console.log("pending result", result)
 
@@ -115,13 +119,13 @@ const FineUser = () => {
         getTotalFines()
     },[states.triggerLogin])
 
-    useEffect (() => {
-        getListMyFines()
-        getTotalFines()
-        setTimeout(() => {
-            dispatch(triggerFinesNotification(false))
-        }, 1000)
-    },[states.triggerFinesNotification])
+    // useEffect (() => {
+    //     getListMyFines()
+    //     getTotalFines()
+    //     setTimeout(() => {
+    //         dispatch(triggerFinesNotification(false))
+    //     }, 1000)
+    // },[states.triggerFinesNotification])
 
 
     return ( 
@@ -165,10 +169,10 @@ const FineUser = () => {
                             <Text fontSize='2xl' fontWeight='semibold' color='red.500'>Rp.{totalFines.Outstanding}</Text>
                         </Box>
                         <Box display='flex' justifyContent='space-between' alignItems='center' px='20px'>
-                            {(totalFines.Outstanding > 0) ?
-                                <Button onClick={handleFines} colorScheme='blue' w='50%' mx='auto' my='10px'isDisabled={true}>Bayar Denda</Button> 
+                            {(parseInt(totalFines.Outstanding) > 0) ?
+                                <Button onClick={handleFines} colorScheme='blue' w='50%' mx='auto' my='10px'>Bayar Denda</Button> 
                                 :
-                                <Button onClick={handleFines} colorScheme='blue' w='50%' mx='auto' my='10px'>Bayar Denda</Button>
+                                <Button onClick={handleFines} colorScheme='blue' w='50%' mx='auto' my='10px' isDisabled={true}>Bayar Denda</Button>
                             }
                         </Box>   
             </Box>

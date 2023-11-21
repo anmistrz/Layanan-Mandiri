@@ -128,7 +128,7 @@ const ModalDropbox = (props) => {
 
     useEffect(() => {
         addListDropbox()
-        console.log("dropbox bukuuu", stateDropbox.listDropboxBookPending)
+        // console.log("dropbox bukuuu", stateDropbox.listDropboxBookPending)
     }, [dataInput])
 
 

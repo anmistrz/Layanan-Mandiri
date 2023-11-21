@@ -115,14 +115,16 @@ const ModalProfile = (props) => {
                                     id="phone" 
                                     name="phone" 
                                     defaultValue={props.data.phone} 
-                                    onChange={formik.handleChange} />
+                                    onChange={formik.handleChange} 
+                                    maxLength={12}
+                                />
 
                         </ModalBody>
                         <ModalFooter>
                             <Button colorScheme="red" mr={3} onClick={props.onClose}>
                                 Close
                             </Button>
-                            <Button mr={3} colorScheme="blue" type="submit" isLoading={formik.isSubmitting}>
+                            <Button mr={3} colorScheme="blue" type="submit">
                                     Update Data
                             </Button>
                         </ModalFooter>

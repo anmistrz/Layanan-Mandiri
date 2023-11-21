@@ -46,7 +46,7 @@ const Joi = require('joi');
                             const result = []
 
                             for (let i = 0; i < listFines.length; i++) {
-                                const updateFines = await mysql.query("UPDATE koha.accountlines SET amountoutstanding = 0.00, date = NOW(), accounttype = 'PAY', note = 'GATEWAY', interface = 'Intranet', amount = ? WHERE itemnumber = ? AND borrowernumber = ?",
+                                const updateFines = await mysql.query("UPDATE koha.accountlines SET amountoutstanding = 0.00, date = NOW(), accounttype = 'PAY', status = 'RETURNED' ,note = 'GATEWAY', interface = 'Intranet', amount = ? WHERE itemnumber = ? AND borrowernumber = ?",
                                 [-Math.abs(listFines[i].amountoutstanding), listFines[i].itemnumber, listFines[i].borrowernumber])
                                 result.push(updateFines)
                             }

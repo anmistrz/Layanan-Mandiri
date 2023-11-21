@@ -293,6 +293,9 @@ class _auth {
 
             const checkUser = await mysql.query('SELECT p.userid, p.password ,p.surname, p.dateexpiry FROM koha.borrowers p WHERE p.userid = ?', [body.userid])
 
+            console.log("password" + " " +checkUser[0].password)
+            console.log("body password" + " " + body.password)
+
             const checkPassword = Bcrypt.compareSync(
                 body.password,
                 checkUser[0].password

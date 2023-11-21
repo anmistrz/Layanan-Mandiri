@@ -109,27 +109,27 @@ const dropBoxBuku = () => {
             const resDelete = await dispatch(deleteChekin(value))
 
             if(res.type === "addChekin/fulfilled" && resUpdate.type === "updateChekin/fulfilled" && resDelete.type === "deleteChekin/fulfilled") {
-                toast({
-                    title: 'Dropbox Buku Success',
-                    status: 'success',
-                    isClosable: true,
-                })
-                setInputBarcodeCheckin({})
-                setLoading(false)
-            } else {
-                toast({
-                    title: 'Dropbox Buku Failed',
-                    status: 'error',
-                    isClosable: true,
-                })
-                setLoading(false)
-                stateChekin.listBookCheckIn([])
-            }
-
+                if(res.payload.length > 0 && resUpdate.payload.length > 0 && resDelete.payload.length > 0){
+                    toast({
+                        title: 'Dropbox Buku Berhasil',
+                        status: 'success',
+                        isClosable: true,
+                    })
+                    setLoading(false)
+                    // stateChekin.listBookCheckIn([])
+                } else {
+                    toast({
+                        title: 'Dropbox Buku Gagal',
+                        status: 'error',
+                        isClosable: true,
+                    })
+                    setLoading(false)
+                }
+            } 
         } catch (error) {
             console.log(error)
             toast({
-                title: 'Dropbox Buku Failed',
+                title: 'Dropbox Buku Gagal',
                 status: 'error',
                 isClosable: true,
             })
