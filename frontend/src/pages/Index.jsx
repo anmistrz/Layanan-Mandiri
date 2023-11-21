@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+staimport React, {useState, useRef} from "react";
 import Navbar from "../Components/Navbar";
 import ScanUserLogin from "../Components/ScanUserLogin";
 
@@ -7,6 +7,7 @@ import {
     Text, 
 } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
+
 
 const index = () => {
     const state = useSelector(state => state.login)
